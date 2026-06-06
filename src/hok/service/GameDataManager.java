@@ -1,6 +1,11 @@
 package hok.service;
 
-import hok.model.*;
+import hok.model.Admin;
+import hok.model.Equipment;
+import hok.model.Hero;
+import hok.model.MatchRecord;
+import hok.model.Player;
+import hok.model.Team;
 import hok.util.DataInitializer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -187,8 +192,16 @@ public class GameDataManager {
     }
 
     public Hero findHeroByName(String name) {
+        // First try exact match
         for (Hero h : heroes) {
             if (h.getName().equalsIgnoreCase(name)) {
+                return h;
+            }
+        }
+        // Then try partial match (case-insensitive)
+        String lowerName = name.toLowerCase();
+        for (Hero h : heroes) {
+            if (h.getName().toLowerCase().contains(lowerName)) {
                 return h;
             }
         }

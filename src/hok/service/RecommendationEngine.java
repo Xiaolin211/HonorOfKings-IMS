@@ -1,8 +1,19 @@
 package hok.service;
 
-import hok.enums.*;
-import hok.model.*;
-import java.util.*;
+import hok.enums.EquipmentType;
+import hok.enums.HeroType;
+import hok.enums.RecommendationType;
+import hok.model.Equipment;
+import hok.model.Hero;
+import hok.model.Player;
+import hok.model.RecommendationResult;
+import hok.model.Team;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * AI-powered recommendation engine for heroes and equipment.

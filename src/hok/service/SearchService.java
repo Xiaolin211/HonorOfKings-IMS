@@ -1,6 +1,10 @@
 package hok.service;
 
-import hok.model.*;
+import hok.model.Equipment;
+import hok.model.Hero;
+import hok.model.MatchRecord;
+import hok.model.Player;
+import hok.model.Team;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,10 +73,12 @@ public class SearchService {
 
         StringBuilder sb = new StringBuilder();
         sb.append(team.getDetailedInfo());
-        sb.append("\n");
+
+        // Show total matches for this team
+        List<MatchRecord> matches = dm.findMatchesByTeam(team.getId());
+        sb.append("Total Matches: ").append(matches.size()).append("\n\n");
 
         // Show recent matches for this team
-        List<MatchRecord> matches = dm.findMatchesByTeam(team.getId());
         int show = Math.min(5, matches.size());
         sb.append("Recent Matches (").append(show).append(" of ").append(matches.size()).append("):\n");
         for (int i = 0; i < show; i++) {
@@ -136,19 +142,94 @@ public class SearchService {
     }
 
     /**
-     * Returns formatted match history as a string.
+     * Returns formatted match history as a string, including win/loss record
+     * and hero pick rate statistics.
      */
     public String formatMatchHistory(String query, int limit) {
-        List<MatchRecord> records = getMatchHistory(query, limit);
+        // Resolve query to a team (for W/L perspective + hero pick rate)
+        Team queriedTeam = dm.findTeamById(query);
+        if (queriedTeam == null) queriedTeam = dm.findTeamByName(query);
+        if (queriedTeam == null) {
+            Player p = dm.findPlayerById(query);
+            if (p == null) p = dm.findPlayerByName(query);
+            if (p != null) queriedTeam = p.getTeam();
+        }
+
+        List<MatchRecord> records;
+        if (queriedTeam != null) {
+            records = dm.findMatchesByTeam(queriedTeam.getId());
+        } else {
+            records = new ArrayList<>();
+        }
+
         if (records.isEmpty()) {
             return "No matches found for: " + query;
         }
 
+        List<MatchRecord> shown = records.subList(0, Math.min(limit, records.size()));
+
         StringBuilder sb = new StringBuilder();
-        sb.append("===== Match History (").append(records.size()).append(") =====\n");
-        for (MatchRecord m : records) {
+        sb.append("===== Match History (").append(shown.size())
+          .append(" of ").append(records.size()).append(" total) =====\n");
+
+        // --- Win/Loss Record Summary ---
+        if (queriedTeam != null) {
+            int wins = 0, losses = 0, draws = 0;
+            for (MatchRecord m : records) {
+                if (m.getTeamA().equals(queriedTeam)) {
+                    if (m.getResult() == hok.enums.MatchResult.WIN) wins++;
+                    else if (m.getResult() == hok.enums.MatchResult.LOSE) losses++;
+                    else draws++;
+                } else if (m.getTeamB().equals(queriedTeam)) {
+                    if (m.getResult() == hok.enums.MatchResult.LOSE) wins++;
+                    else if (m.getResult() == hok.enums.MatchResult.WIN) losses++;
+                    else draws++;
+                }
+            }
+            sb.append("Win/Loss Record: ").append(wins).append("W / ")
+              .append(losses).append("L / ").append(draws).append("D")
+              .append("  (Win Rate: ").append(String.format("%.1f%%",
+                      records.isEmpty() ? 0 : (double) wins / records.size() * 100))
+              .append(")\n\n");
+        }
+
+        // --- Match List ---
+        for (MatchRecord m : shown) {
             sb.append(m.toString()).append("\n");
         }
+
+        // --- Hero Pick Rate Statistics ---
+        if (!records.isEmpty()) {
+            sb.append("\n--- Hero Pick Rate (all ").append(records.size())
+              .append(" matches) ---\n");
+            java.util.Map<String, Integer> heroCount = new java.util.LinkedHashMap<>();
+            int totalPickSlots = 0;
+            for (MatchRecord m : records) {
+                String[] picksA = m.getHeroPicksA().isEmpty() ? new String[0]
+                        : m.getHeroPicksA().split(",\\s*");
+                String[] picksB = m.getHeroPicksB().isEmpty() ? new String[0]
+                        : m.getHeroPicksB().split(",\\s*");
+                for (String name : picksA) {
+                    heroCount.put(name, heroCount.getOrDefault(name, 0) + 1);
+                    totalPickSlots++;
+                }
+                for (String name : picksB) {
+                    heroCount.put(name, heroCount.getOrDefault(name, 0) + 1);
+                    totalPickSlots++;
+                }
+            }
+            // Sort by count descending
+            java.util.List<java.util.Map.Entry<String, Integer>> sorted = new java.util.ArrayList<>(heroCount.entrySet());
+            sorted.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
+            sb.append(String.format("%-18s %6s %8s\n", "Hero", "Picks", "Pick Rate"));
+            sb.append("-----------------------------------\n");
+            for (java.util.Map.Entry<String, Integer> e : sorted) {
+                double rate = totalPickSlots > 0 ? (double) e.getValue() / totalPickSlots * 100 : 0;
+                sb.append(String.format("%-18s %6d %7.1f%%\n",
+                        e.getKey(), e.getValue(), rate));
+            }
+        }
+
         return sb.toString();
     }
 

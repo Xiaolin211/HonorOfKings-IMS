@@ -64,8 +64,8 @@
 | **Category** | Team Overview |
 | **Description** | View team t02 (Phoenix Rise) details |
 | **Steps** | 1. Menu option `2` → Enter `t02` → Observe output |
-| **Expected Output** | Displays Team Phoenix Rise, 5 members, average level (computed), team win rate, top player (Felix or Jack), roster list, and recent matches |
-| **Actual Output** | Displays Team Phoenix Rise, 5 members, average level 21.4, team win rate 64.0%, top player Felix (80.0%), full roster, 5 recent matches |
+| **Expected Output** | Displays Team Phoenix Rise, 5 members, average level (computed), team win rate, Total Matches, top player (Felix or Jack), roster list, and recent matches |
+| **Actual Output** | Displays Team Phoenix Rise, 5 members, average level 21.4, team win rate 64.0%, Total Matches: 6, top player Felix (80.0%), full roster, 5 recent matches |
 | **Result** | PASS |
 | **Bug Found** | None |
 
@@ -324,6 +324,57 @@
 
 ---
 
+## 11. Match History — Hero Picks (1 test)
+
+### TC-22: Match History Shows Hero Picks
+
+| Field | Detail |
+|-------|--------|
+| **Test ID** | TC-22 |
+| **Category** | Match History |
+| **Description** | View match history and verify hero picks are displayed for both teams |
+| **Steps** | 1. Menu option `5` → Enter `t01` → Enter `5` → Observe output |
+| **Expected Output** | Each match record shows both teams' hero picks (e.g., "Dragon Warriors picks: Xiang Yu, Li Bai... \| Phoenix Rise picks: Hua Mulan, Lu Bu...") |
+| **Actual Output** | Match records display with hero picks for both teams — e.g., "Dragon Warriors picks: Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7 \| Phoenix Rise picks: Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi" |
+| **Result** | PASS |
+| **Bug Found** | None |
+
+---
+
+## 12. Player Self-Edit (1 test)
+
+### TC-23: Player Edit Own Profile
+
+| Field | Detail |
+|-------|--------|
+| **Test ID** | TC-23 |
+| **Category** | Player Account Management |
+| **Description** | Login as a player and edit own profile name |
+| **Steps** | 1. Login as player `p001` with password `p001123` 2. Menu option `11` (My Account) → Choose `2` (Edit My Profile) 3. Enter new name `AlexUpdated` 4. Choose `1` (View My Profile) to verify name changed |
+| **Expected Output** | Step 2: Shows "Current name: Alex". Step 3: "Profile updated. New name: AlexUpdated". Step 4: Player details show new name |
+| **Actual Output** | "Profile updated. New name: AlexUpdated" — Player details show updated name |
+| **Result** | PASS |
+| **Bug Found** | None |
+
+---
+
+## 13. Team Overview — Total Matches (1 test)
+
+### TC-24: Team Overview Shows Total Matches
+
+| Field | Detail |
+|-------|--------|
+| **Test ID** | TC-24 |
+| **Category** | Team Overview |
+| **Description** | View team details and verify "Total Matches" is displayed |
+| **Steps** | 1. Menu option `2` → Enter `t01` → Observe output |
+| **Expected Output** | Team details include a "Total Matches: N" line showing the total number of matches this team has played |
+| **Actual Output** | "Total Matches: 6" displayed after team details, followed by recent matches section |
+| **Result** | PASS |
+| **Bug Found** | None |
+
+---
+
 ## Summary
 
 | # | Test ID | Category | Status |
@@ -349,10 +400,13 @@
 | 19 | TC-19 | Admin — Add/Delete Player | PASS |
 | 20 | TC-20 | Admin — Add Match Record | PASS |
 | 21 | TC-21 | File I/O — Save & Verify CSV | PASS |
+| 22 | TC-22 | Match History — Hero Picks | PASS |
+| 23 | TC-23 | Player Self-Edit Profile | PASS |
+| 24 | TC-24 | Team Overview — Total Matches | PASS |
 
 ### Test Results Summary
-- **Total Tests**: 21
-- **Passed**: 21 (100%)
+- **Total Tests**: 24
+- **Passed**: 24 (100%)
 - **Failed**: 0 (0%)
 
 ### Issues Found

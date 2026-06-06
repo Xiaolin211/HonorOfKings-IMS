@@ -83,7 +83,7 @@ This project implements an AI-Assisted Information Management System for "Honor 
 | **Exception Handling** | try-catch in File I/O; custom exceptions for data integrity violations |
 | **File I/O** | CSV read/write operations in FileStorageService |
 | **Enums** | Role, HeroType, EquipmentType, MatchResult |
-| **Strategy Design Pattern** | Encapsulates interchangeable recommendation algorithms (`HeroRecommendationStrategy`, `EquipmentRecommendationStrategy`) behind a common interface, enabling runtime algorithm switching and Open/Closed Principle compliance |
+| **Strategy Design Pattern** | (Design intent documented — actual implementation consolidates all recommendation strategies into a single `RecommendationEngine` class with weighted multi-factor scoring. This simplification was chosen because all strategies share the same data context and there is only one concrete implementation per recommendation type. The weighted formula approach achieves the same extensibility goal via configurable factor weights.) |
 | **Java Streams & Collectors** | Used extensively for filtering candidate pools, mapping entities to scored results, and aggregating statistics (e.g., `stream().filter().map().sorted().limit()` pipeline) |
 | **Custom Comparator / Sorting** | Multi-factor weighted scoring with custom `Comparator<RecommendationResult>` for ranking results by composite score |
 | **Generics** (`RecommendationResult<T>`) | Type-safe recommendation container supporting both `Hero` and `Equipment` return types from a unified interface |
@@ -128,13 +128,13 @@ This project implements an AI-Assisted Information Management System for "Honor 
 | Class | Package | Responsibility |
 | :--- | :--- | :--- |
 | `RecommendationEngine` | `src/hok/service/recommendation/` | Facade class; manages strategy registry and delegates execution |
-| `RecommendationStrategy` | `src/hok/service/recommendation/` | Interface defining `execute(RecommendationRequest)` contract |
-| `HeroRecommendationStrategy` | `src/hok/service/recommendation/impl/` | Weighted scoring for hero picks (synergy + mastery + win rate) |
-| `EquipmentRecommendationStrategy` | `src/hok/service/recommendation/impl/` | Weighted scoring for equipment builds (usage + win rate + inventory) |
-| `RecommendationResult<T>` | `src/hok/model/recommendation/` | Generic result DTO: item, score, reason string, factor breakdown map |
-| `RecommendationRequest` | `src/hok/model/recommendation/` | Input DTO: player context, team composition, target role, top-N |
-| `RecommendationFactor` | `src/hok/model/recommendation/` | Enum: WIN_RATE, PLAYER_MASTERY, TEAM_SYNERGY, EQUIP_POPULARITY, OWNERSHIP |
-| `RecommendationMenu` | `src/hok/ui/` | Sub-menu UI implementing `IMenu` interface for recommendation entry points |
+| `RecommendationStrategy` | (Design-only — simplified to weighted methods in RecommendationEngine) | Interface pattern documented but consolidated for simplicity |
+| `HeroRecommendationStrategy` | (Design-only — see computeHeroScore in RecommendationEngine) | Weighted scoring logic implemented as private methods |
+| `EquipmentRecommendationStrategy` | (Design-only — see computeEquipmentScore in RecommendationEngine) | Weighted scoring logic implemented as private methods |
+| `RecommendationResult` | `src/hok/model/` | Result DTO: item, score, reason string, factor breakdown map |
+| `RecommendationRequest` | (Design-only — simplified to method parameters) | Input context passed as method arguments |
+| `RecommendationFactor` | (Design-only — implemented as scoring constants and maps) | Factor weights defined as static final doubles |
+| `RecommendationMenu` | (Inlined in Main.java `handleRecommendation()`) | Sub-menu UI integrated into Main menu router |
 
 ---
 

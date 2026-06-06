@@ -14,6 +14,8 @@ public class MatchRecord {
     private MatchResult result;
     private String matchDate;
     private String matchType;
+    private String heroPicksA;  // hero names used by teamA, e.g. "Li Bai, Luban No.7, Cai Wenji"
+    private String heroPicksB;  // hero names used by teamB
 
     public MatchRecord(String id, Team teamA, Team teamB,
                        MatchResult result, String matchDate, String matchType) {
@@ -23,6 +25,21 @@ public class MatchRecord {
         this.result = result;
         this.matchDate = matchDate;
         this.matchType = matchType;
+        this.heroPicksA = "";
+        this.heroPicksB = "";
+    }
+
+    public MatchRecord(String id, Team teamA, Team teamB,
+                       MatchResult result, String matchDate, String matchType,
+                       String heroPicksA, String heroPicksB) {
+        this.id = id;
+        this.teamA = teamA;
+        this.teamB = teamB;
+        this.result = result;
+        this.matchDate = matchDate;
+        this.matchType = matchType;
+        this.heroPicksA = heroPicksA;
+        this.heroPicksB = heroPicksB;
     }
 
     // === Getters ===
@@ -49,6 +66,24 @@ public class MatchRecord {
 
     public String getMatchType() {
         return matchType;
+    }
+
+    public String getHeroPicksA() {
+        return heroPicksA;
+    }
+
+    public String getHeroPicksB() {
+        return heroPicksB;
+    }
+
+    // === Setters ===
+
+    public void setHeroPicksA(String heroPicksA) {
+        this.heroPicksA = heroPicksA;
+    }
+
+    public void setHeroPicksB(String heroPicksB) {
+        this.heroPicksB = heroPicksB;
     }
 
     // === Utility ===
@@ -79,8 +114,16 @@ public class MatchRecord {
 
     @Override
     public String toString() {
-        return id + " | " + matchDate + " | " + teamA.getName()
-                + " vs " + teamB.getName() + " | " + result
-                + " | " + matchType;
+        StringBuilder sb = new StringBuilder();
+        sb.append(id).append(" | ").append(matchDate).append(" | ")
+          .append(teamA.getName()).append(" vs ").append(teamB.getName())
+          .append(" | ").append(result).append(" | ").append(matchType);
+        if (!heroPicksA.isEmpty()) {
+            sb.append(" | ").append(teamA.getName()).append(" picks: ").append(heroPicksA);
+        }
+        if (!heroPicksB.isEmpty()) {
+            sb.append(" | ").append(teamB.getName()).append(" picks: ").append(heroPicksB);
+        }
+        return sb.toString();
     }
 }

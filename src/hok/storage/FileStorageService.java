@@ -1,8 +1,20 @@
 package hok.storage;
 
-import hok.enums.*;
-import hok.model.*;
-import java.io.*;
+import hok.enums.EquipmentType;
+import hok.enums.HeroType;
+import hok.enums.MatchResult;
+import hok.model.Admin;
+import hok.model.Equipment;
+import hok.model.Hero;
+import hok.model.MatchRecord;
+import hok.model.Player;
+import hok.model.Team;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -297,15 +309,18 @@ public class FileStorageService {
     }
 
     // ==================== Match Records CSV ====================
-    // Format: id,teamAId,teamBId,result,matchDate,matchType
+    // Format: id,teamAId,teamBId,result,matchDate,matchType,heroPicksA,heroPicksB
 
     private boolean saveMatchRecords(List<MatchRecord> records) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_DIR + "/matchrecords.csv"))) {
-            pw.println("id,teamAId,teamBId,result,matchDate,matchType");
+            pw.println("id,teamAId,teamBId,result,matchDate,matchType,heroPicksA,heroPicksB");
             for (MatchRecord m : records) {
+                String picksA = (m.getHeroPicksA() != null) ? m.getHeroPicksA() : "";
+                String picksB = (m.getHeroPicksB() != null) ? m.getHeroPicksB() : "";
                 pw.println(m.getId() + SEPARATOR + m.getTeamA().getId()
                         + SEPARATOR + m.getTeamB().getId() + SEPARATOR + m.getResult()
-                        + SEPARATOR + m.getMatchDate() + SEPARATOR + m.getMatchType());
+                        + SEPARATOR + m.getMatchDate() + SEPARATOR + m.getMatchType()
+                        + SEPARATOR + picksA + SEPARATOR + picksB);
             }
             return true;
         } catch (IOException e) {
@@ -328,7 +343,9 @@ public class FileStorageService {
                 Team teamB = findTeamById(teams, parts[2]);
                 if (teamA == null || teamB == null) continue;
                 MatchResult result = MatchResult.valueOf(parts[3]);
-                MatchRecord m = new MatchRecord(parts[0], teamA, teamB, result, parts[4], parts[5]);
+                String picksA = (parts.length > 6) ? parts[6] : "";
+                String picksB = (parts.length > 7) ? parts[7] : "";
+                MatchRecord m = new MatchRecord(parts[0], teamA, teamB, result, parts[4], parts[5], picksA, picksB);
                 records.add(m);
             }
         } catch (IOException e) {

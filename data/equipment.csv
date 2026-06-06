@@ -1,0 +1,21 @@
+id,name,equipmentType,attackBonus,defenseBonus,hpBonus,speedBonus,rating,usageCount
+e01,Infinity Blade,ATTACK,120,0,0,0,9.5,120
+e02,Bloodthirsty Bow,ATTACK,100,0,0,20,8.5,95
+e03,Shadow Axe,ATTACK,110,10,0,0,8.0,80
+e04,Lightning Dagger,ATTACK,90,0,0,40,7.5,65
+e05,Doomsday Blade,ATTACK,130,0,0,-10,9.0,45
+e06,Titan Shield,DEFENSE,0,150,300,0,9.0,110
+e07,Guardian Armor,DEFENSE,0,180,200,-20,8.5,85
+e08,Immortal Cloak,DEFENSE,0,120,400,0,9.5,75
+e09,Frost Armor,DEFENSE,0,140,250,10,8.0,55
+e10,Thorn Mail,DEFENSE,20,160,150,0,7.5,40
+e11,Arcane Staff,MAGIC,0,0,100,0,8.5,70
+e12,Void Scepter,MAGIC,0,0,80,20,8.0,60
+e13,Holy Grail,MAGIC,0,0,120,10,9.0,50
+e14,Frozen Wand,MAGIC,0,10,90,15,7.5,35
+e15,Swift Boots,MOVEMENT,10,10,50,80,7.0,90
+e16,Shadow Cloak,MOVEMENT,15,15,60,70,7.5,105
+e17,Windrider,MOVEMENT,5,5,40,100,8.0,30
+e18,Hunter's Machete,JUNGLE,60,10,0,20,7.0,25
+e19,Predator Fang,JUNGLE,80,0,0,30,8.0,20
+e20,Beast Bane,JUNGLE,70,20,50,15,8.5,100

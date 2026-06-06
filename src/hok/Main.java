@@ -1,8 +1,15 @@
 package hok;
 
 import hok.enums.HeroType;
+import hok.model.Person;
+import hok.model.Player;
 import hok.model.RecommendationResult;
-import hok.service.*;
+import hok.service.AdminService;
+import hok.service.AuthenticationService;
+import hok.service.GameDataManager;
+import hok.service.RankingService;
+import hok.service.RecommendationEngine;
+import hok.service.SearchService;
 import hok.storage.FileStorageService;
 import hok.util.InputHelper;
 import java.util.List;
@@ -86,7 +93,7 @@ public class Main {
         System.out.println(" 8. Admin Data Management");
         System.out.println(" 9. Save Data");
         System.out.println("10. Load Data");
-        System.out.println("11. Login / Logout");
+        System.out.println("11. Login / My Account");
         System.out.println("12. Exit");
         System.out.println("===============================");
     }
@@ -320,11 +327,7 @@ public class Main {
 
     private static void handleLogin() {
         if (authService.isLoggedIn()) {
-            System.out.println("Logged in as: " + authService.getCurrentUser().getName());
-            if (InputHelper.readYesNo("Logout?")) {
-                authService.logout();
-                System.out.println("Logged out.");
-            }
+            handleAccountMenu();
             return;
         }
 
@@ -339,6 +342,69 @@ public class Main {
                     + " (" + authService.getCurrentUser().getRole() + ")");
         } else {
             System.out.println("Login failed. Check ID and password.");
+        }
+    }
+
+    /**
+     * Account menu shown when a user is logged in.
+     * Players can view/edit their profile; Admins can logout.
+     */
+    private static void handleAccountMenu() {
+        System.out.println("\n--- My Account ---");
+        System.out.println("Logged in as: " + authService.getCurrentUser().getName()
+                + " (" + authService.getCurrentUser().getRole() + ")");
+        System.out.println("1. View My Profile");
+
+        // Players can edit their own profile
+        if (!authService.isAdmin()) {
+            System.out.println("2. Edit My Profile");
+            System.out.println("3. Logout");
+            int choice = InputHelper.readInt("Enter choice: ", 1, 3);
+            switch (choice) {
+                case 1:
+                    System.out.println(searchService.lookupPlayer(authService.getCurrentUser().getId()));
+                    break;
+                case 2:
+                    handleEditMyProfile();
+                    break;
+                case 3:
+                    authService.logout();
+                    System.out.println("Logged out.");
+                    break;
+            }
+        } else {
+            System.out.println("2. Logout");
+            int choice = InputHelper.readInt("Enter choice: ", 1, 2);
+            switch (choice) {
+                case 1:
+                    System.out.println("Admin account: " + authService.getCurrentUser().toString());
+                    break;
+                case 2:
+                    authService.logout();
+                    System.out.println("Logged out.");
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Allows a logged-in player to edit their own profile (name only).
+     */
+    private static void handleEditMyProfile() {
+        Person current = authService.getCurrentUser();
+        if (!(current instanceof Player)) {
+            System.out.println("Only players can edit their profile.");
+            return;
+        }
+        Player player = (Player) current;
+        System.out.println("\n--- Edit My Profile ---");
+        System.out.println("Current name: " + player.getName());
+        String newName = InputHelper.readString("New name (blank to keep current): ");
+        if (!newName.isEmpty()) {
+            player.setName(newName);
+            System.out.println("Profile updated. New name: " + player.getName());
+        } else {
+            System.out.println("Profile unchanged.");
         }
     }
 

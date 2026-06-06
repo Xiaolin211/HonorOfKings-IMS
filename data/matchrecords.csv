@@ -1,0 +1,11 @@
+id,teamAId,teamBId,result,matchDate,matchType
+m01,t01,t02,WIN,2026-05-01,Ranked
+m02,t02,t03,WIN,2026-05-03,Ranked
+m03,t01,t03,LOSE,2026-05-05,Ranked
+m04,t03,t01,WIN,2026-05-07,Normal
+m05,t02,t01,LOSE,2026-05-10,Ranked
+m06,t03,t02,LOSE,2026-05-12,Normal
+m07,t01,t02,DRAW,2026-05-15,Ranked
+m08,t02,t03,LOSE,2026-05-18,Ranked
+m09,t01,t03,WIN,2026-05-22,Normal
+m10,t03,t02,WIN,2026-05-28,Ranked

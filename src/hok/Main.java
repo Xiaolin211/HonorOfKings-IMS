@@ -1,8 +1,11 @@
 package hok;
 
+import hok.enums.HeroType;
+import hok.model.RecommendationResult;
 import hok.service.*;
 import hok.storage.FileStorageService;
 import hok.util.InputHelper;
+import java.util.List;
 
 /**
  * Entry point for the Honor of Kings Management System.
@@ -17,6 +20,7 @@ public class Main {
     private static AuthenticationService authService;
     private static AdminService adminService;
     private static FileStorageService fileService;
+    private static RecommendationEngine recommendationEngine;
     private static boolean running = true;
 
     public static void main(String[] args) {
@@ -33,6 +37,7 @@ public class Main {
         authService = new AuthenticationService(dataManager);
         adminService = new AdminService(dataManager);
         fileService = new FileStorageService();
+        recommendationEngine = new RecommendationEngine(dataManager);
 
         System.out.println("Data loaded: " + dataManager.getAllPlayers().size() + " players, "
                 + dataManager.getAllHeroes().size() + " heroes, "
@@ -43,7 +48,7 @@ public class Main {
         // Main loop
         while (running) {
             showMainMenu();
-            int choice = InputHelper.readInt("Enter your choice: ", 0, 11);
+            int choice = InputHelper.readInt("Enter your choice: ", 0, 12);
 
             switch (choice) {
                 case 1: handlePlayerLookup(); break;
@@ -52,11 +57,12 @@ public class Main {
                 case 4: handleEquipmentStats(); break;
                 case 5: handleMatchHistory(); break;
                 case 6: handleLeaderboard(); break;
-                case 7: handleAdminManagement(); break;
-                case 8: handleSaveData(); break;
-                case 9: handleLoadData(); break;
-                case 10: handleLogin(); break;
-                case 11: handleExit(); break;
+                case 7: handleRecommendation(); break;
+                case 8: handleAdminManagement(); break;
+                case 9: handleSaveData(); break;
+                case 10: handleLoadData(); break;
+                case 11: handleLogin(); break;
+                case 12: handleExit(); break;
                 case 0: handleExit(); break;
                 default:
                     System.out.println("Invalid choice. Try again.");
@@ -76,11 +82,12 @@ public class Main {
         System.out.println(" 4. Equipment Statistics");
         System.out.println(" 5. Match History");
         System.out.println(" 6. Leaderboard");
-        System.out.println(" 7. Admin Data Management");
-        System.out.println(" 8. Save Data");
-        System.out.println(" 9. Load Data");
-        System.out.println("10. Login / Logout");
-        System.out.println("11. Exit");
+        System.out.println(" 7. AI Recommendation Engine");
+        System.out.println(" 8. Admin Data Management");
+        System.out.println(" 9. Save Data");
+        System.out.println("10. Load Data");
+        System.out.println("11. Login / Logout");
+        System.out.println("12. Exit");
         System.out.println("===============================");
     }
 
@@ -165,9 +172,106 @@ public class Main {
         }
     }
 
+    private static void handleRecommendation() {
+        boolean inRec = true;
+        while (inRec) {
+            System.out.println("\n===== AI RECOMMENDATION ENGINE =====");
+            System.out.println("1. Recommend Heroes for a Player");
+            System.out.println("2. Recommend Equipment for a Player");
+            System.out.println("3. Recommend Heroes by Type (Global)");
+            System.out.println("4. Recommend Equipment by Hero Type");
+            System.out.println("0. Back to Main Menu");
+            System.out.println("====================================");
+
+            int choice = InputHelper.readInt("Enter choice: ", 0, 4);
+            switch (choice) {
+                case 1: recHeroesForPlayer(); break;
+                case 2: recEquipmentForPlayer(); break;
+                case 3: recHeroesByType(); break;
+                case 4: recEquipmentByType(); break;
+                case 0: inRec = false; break;
+            }
+        }
+    }
+
+    private static void recHeroesForPlayer() {
+        // List all players first
+        System.out.println("\nAvailable Players:");
+        for (var p : dataManager.getAllPlayers()) {
+            System.out.println("  " + p.getSummary());
+        }
+        String playerId = InputHelper.readString("\nEnter player ID: ");
+        int count = InputHelper.readInt("How many recommendations? ", 1, 15);
+
+        List<RecommendationResult> results =
+                recommendationEngine.recommendHeroesForPlayer(playerId, count);
+
+        if (results.isEmpty()) {
+            System.out.println("No recommendations available (player not found or owns all heroes).");
+            return;
+        }
+
+        System.out.println("\n===== Hero Recommendations =====");
+        for (RecommendationResult r : results) {
+            System.out.println(r.toDetailedString());
+        }
+    }
+
+    private static void recEquipmentForPlayer() {
+        System.out.println("\nAvailable Players:");
+        for (var p : dataManager.getAllPlayers()) {
+            System.out.println("  " + p.getSummary());
+        }
+        String playerId = InputHelper.readString("\nEnter player ID: ");
+        int count = InputHelper.readInt("How many recommendations? ", 1, 20);
+
+        List<RecommendationResult> results =
+                recommendationEngine.recommendEquipmentForPlayer(playerId, count);
+
+        if (results.isEmpty()) {
+            System.out.println("No recommendations available (player not found).");
+            return;
+        }
+
+        System.out.println("\n===== Equipment Recommendations =====");
+        for (RecommendationResult r : results) {
+            System.out.println(r.toDetailedString());
+        }
+    }
+
+    private static void recHeroesByType() {
+        System.out.println("\nHero Types: 1-TANK 2-WARRIOR 3-ASSASSIN 4-MAGE 5-MARKSMAN 6-SUPPORT");
+        int t = InputHelper.readInt("Select type: ", 1, 6);
+        HeroType type = HeroType.values()[t - 1];
+        int count = InputHelper.readInt("How many to show? ", 1, 15);
+
+        List<RecommendationResult> results =
+                recommendationEngine.recommendHeroByType(type, count);
+
+        System.out.println("\n===== Top " + type + " Heroes =====");
+        for (RecommendationResult r : results) {
+            System.out.println(r.toDetailedString());
+        }
+    }
+
+    private static void recEquipmentByType() {
+        System.out.println("\nHero Types: 1-TANK 2-WARRIOR 3-ASSASSIN 4-MAGE 5-MARKSMAN 6-SUPPORT");
+        int t = InputHelper.readInt("Select hero type: ", 1, 6);
+        HeroType type = HeroType.values()[t - 1];
+        int count = InputHelper.readInt("How many to show? ", 1, 20);
+
+        List<RecommendationResult> results =
+                recommendationEngine.recommendEquipmentByHeroType(type, count);
+
+        System.out.println("\n===== Best Equipment for " + type + " Heroes =====");
+        for (RecommendationResult r : results) {
+            System.out.println(r.toDetailedString());
+        }
+    }
+
     private static void handleAdminManagement() {
         if (!authService.isLoggedIn()) {
-            System.out.println("Please login first (Option 10).");
+            System.out.println("Please login first (Option 11).");
             return;
         }
         if (!authService.isAdmin()) {
@@ -210,9 +314,6 @@ public class Main {
             return;
         }
 
-        // Reinitialize GameDataManager with loaded data (manual rebuild)
-        // For simplicity, we reinitialize from DataInitializer but the loaded data
-        // can be used to manually rebuild the state if needed
         dataManager.initializeData();
         System.out.println("Data reloaded from files.");
     }

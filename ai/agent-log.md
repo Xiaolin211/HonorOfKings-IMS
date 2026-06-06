@@ -10,7 +10,7 @@ This document records AI agent contributions grouped by role, with corresponding
 
 ## 1. Architect Agent
 
-**Total contributions**: 3
+**Total contributions**: 4
 
 ### Contribution 1: Project Structure Review & Plan Analysis (Prompt 01)
 
@@ -28,7 +28,13 @@ This document records AI agent contributions grouped by role, with corresponding
 
 - **Main contribution**: Designed complete Recommendation Engine extension: 3 new classes (RecommendationType enum, RecommendationResult DTO, RecommendationEngine service), 2 weighted multi-factor algorithms (hero: 5 factors at 0.30/0.25/0.20/0.15/0.10 weights; equipment: 4 factors at 0.30/0.25/0.25/0.20), UML diagrams (class diagram, dependency diagram, sequence diagram), design specs with field/method tables, reason generation examples, integration plan for Main.java menu. All factors tied to observable game data with documented rationales.
 - **Related commits**: `c629f39` [AI-Architect]
-- **Human decision**: ACCEPTED. The weighted formula design is transparent and defensible. DTO pattern cleanly separates computation from presentation. Read-only dependency on GameDataManager ensures zero risk to existing data integrity. Ready for implementation. Corrected in code during Prompt 03.
+- **Human decision**: ACCEPTED. The weighted formula design is transparent and defensible. DTO pattern cleanly separates computation from presentation. Read-only dependency on GameDataManager ensures zero risk to existing data integrity. Ready for implementation.
+
+### Contribution 4: plan.md Update with Recommendation Engine Specs (Prompt 12b)
+
+- **Main contribution**: Updated plan.md with 6 insertions: Project Goal bullet, 8 new requirements (FR-REC-01~06 + NFR-REC-01~02), 6 new Java concepts (Strategy, Streams, Generics, EnumMap, etc.), 8 new classes table, 6 REC development phases, 10 test cases.
+- **Related commits**: `6654b36` [AI-Architect]
+- **Human decision**: ACCEPTED. Plan is now comprehensive across architecture and project management. Corrected in code during Prompt 03.
 
 ---
 
@@ -118,5 +124,7 @@ No fix tasks executed yet (planned for Prompt 13).
 | 10 | `fb61331` | [AI-Implementation] | Add Authentication Admin and FileStorage services |
 | 11 | `40b0651` | [Docs] | Update prompts and agent log for Prompts 09-11 |
 | 12 | `c629f39` | [AI-Architect] | Add recommendation engine UML and design |
+| 13 | `b196206` | [Docs] | Update prompts and agent log with review and recommendation design |
+| 14 | `6654b36` | [AI-Architect] | Add recommendation engine to plan.md |
 
-**Quota Status**: [Human] 2/4 | [AI-Architect] 1/3 | [AI-Implementation] 5/3 ✓ | [AI-Review] 0/2 | **Total 12/12 ✓**
+**Quota Status**: [Human] 2/4 | [AI-Architect] 2/3 | [AI-Implementation] 5/3 ✓ | [AI-Review] 0/2 | **Total 14/12 ✓**

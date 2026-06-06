@@ -383,3 +383,29 @@ Designed a complete Recommendation Engine as a new architectural extension. Prod
 ### My Decision
 
 **ACCEPTED.** The weighted formula design is transparent and defensible — every factor has a clear rationale tied to observable game data. The DTO pattern (RecommendationResult) cleanly separates computation from presentation. The read-only dependency on GameDataManager means zero risk to existing data integrity. The explainable reason generation satisfies the coursework requirement for AI-assisted recommendations that a first-year student can explain. Ready for implementation.
+
+---
+
+## Prompt 12b — Architect Agent: Update plan.md with recommendation engine
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Architect |
+| **Related Commit** | `6654b36` |
+
+### AI Response Summary
+
+Updated `plan.md` with 6 targeted insertions covering the full Recommendation Engine specification:
+
+1. **Project Goal**: Added "AI-Assisted Recommendation Engine" bullet describing multi-dimensional analysis and explainable recommendations.
+2. **Requirement Analysis**: Added new subsection — 6 functional requirements (FR-REC-01 through 06: hero recs, equipment recs, explainable output, menu integration, Strategy Pattern, data constraints) and 2 non-functional requirements (sub-500ms response, configurable weights).
+3. **Java Concepts**: Added 6 new entries — Strategy Design Pattern, Java Streams & Collectors, Custom Comparator/Sorting, Generics (RecommendationResult<T>), EnumMap, Functional Interfaces.
+4. **Class Design**: Added 8 new classes table — RecommendationEngine (facade), RecommendationStrategy (interface), HeroRecommendationStrategy, EquipmentRecommendationStrategy, RecommendationResult<T>, RecommendationRequest, RecommendationFactor (enum), RecommendationMenu.
+5. **Development Timeline**: Added 6 REC phases (REC-1 through REC-6, ~12 days) with deliverables and dependencies.
+6. **Testing Plan**: Added 10 test cases (5 unit, 2 integration, 2 edge case, 1 config) covering scoring formulas, filtering, synergy, ranking, explanations, pipeline, navigation, null safety, and config reload.
+
+### My Decision
+
+**ACCEPTED.** The plan is now comprehensive — covering architecture (UML + design docs from Prompt 12a) and project management (plan.md from Prompt 12b). The Strategy Pattern approach satisfies extensibility requirements. The 10 test cases provide adequate coverage for the recommendation feature. The 6 REC phases align with the existing 9-stage timeline. Ready for recommendation engine implementation.

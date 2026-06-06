@@ -57,12 +57,15 @@ public class Team implements Reportable {
 
     /**
      * Removes a player from this team and clears the player's team reference.
+     * Uses Iterator to avoid ConcurrentModificationException.
      */
     public boolean removePlayer(String playerId) {
-        for (Player p : players) {
+        java.util.Iterator<Player> it = players.iterator();
+        while (it.hasNext()) {
+            Player p = it.next();
             if (p.getId().equals(playerId)) {
                 p.setTeam(null);
-                players.remove(p);
+                it.remove();
                 return true;
             }
         }

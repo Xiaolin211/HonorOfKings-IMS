@@ -1,14 +1,33 @@
 package hok.util;
 
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
  * Safe console input handling utility.
  * All methods loop until valid input is received — no exceptions escape to the caller.
- * Uses a single shared Scanner instance.
+ * Uses a single shared Scanner instance with NoSuchElementException guards.
  */
 public class InputHelper {
     private static final Scanner scanner = new Scanner(System.in);
+
+    /**
+     * Reads a line safely. Returns empty string if input is exhausted.
+     */
+    private static String safeNextLine() {
+        try {
+            if (scanner.hasNextLine()) {
+                return scanner.nextLine().trim();
+            }
+            // Input stream exhausted (e.g., piped input ended)
+            System.out.println("\n[Input stream ended. Exiting program.]");
+            System.exit(0);
+        } catch (NoSuchElementException | IllegalStateException e) {
+            System.out.println("\n[Scanner error. Exiting program.]");
+            System.exit(1);
+        }
+        return "";
+    }
 
     /**
      * Reads an integer from the console. Loops until valid input.
@@ -16,7 +35,11 @@ public class InputHelper {
     public static int readInt(String prompt) {
         while (true) {
             System.out.print(prompt);
-            String line = scanner.nextLine().trim();
+            String line = safeNextLine();
+            if (line.isEmpty()) {
+                System.out.println("No input available. Try again.");
+                continue;
+            }
             try {
                 return Integer.parseInt(line);
             } catch (NumberFormatException e) {
@@ -44,7 +67,11 @@ public class InputHelper {
     public static double readDouble(String prompt) {
         while (true) {
             System.out.print(prompt);
-            String line = scanner.nextLine().trim();
+            String line = safeNextLine();
+            if (line.isEmpty()) {
+                System.out.println("No input available. Try again.");
+                continue;
+            }
             try {
                 return Double.parseDouble(line);
             } catch (NumberFormatException e) {
@@ -59,7 +86,7 @@ public class InputHelper {
     public static String readString(String prompt) {
         while (true) {
             System.out.print(prompt);
-            String line = scanner.nextLine().trim();
+            String line = safeNextLine();
             if (!line.isEmpty()) {
                 return line;
             }
@@ -73,7 +100,7 @@ public class InputHelper {
     public static boolean readYesNo(String prompt) {
         while (true) {
             System.out.print(prompt + " (y/n): ");
-            String line = scanner.nextLine().trim().toLowerCase();
+            String line = safeNextLine().toLowerCase();
             if (line.equals("y") || line.equals("yes")) {
                 return true;
             }
@@ -89,6 +116,6 @@ public class InputHelper {
      */
     public static void pressEnterToContinue() {
         System.out.print("\nPress Enter to continue...");
-        scanner.nextLine();
+        safeNextLine();
     }
 }

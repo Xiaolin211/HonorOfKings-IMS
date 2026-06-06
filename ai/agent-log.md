@@ -28,7 +28,7 @@ This document records AI agent contributions grouped by role, with corresponding
 
 ## 2. Implementation Agent
 
-**Total contributions**: 1
+**Total contributions**: 2
 
 ### Contribution 1: Core Model Layer & Initial Dataset (Prompt 03 + Prompt 04)
 
@@ -41,6 +41,12 @@ This document records AI agent contributions grouped by role, with corresponding
   - Verified compilation: 13 .class files, zero errors
 - **Related commits**: `3a2e260` [AI-Implementation]
 - **Human decision**: CHECKED AND VERIFIED. All dataset minimums met. Bidirectional references (Team↔Player) properly maintained. Defensive copy pattern correct. No business logic leaked into model classes. Data is internally consistent. Ready for service layer.
+
+### Contribution 2: GameDataManager (Prompt 05)
+
+- **Main contribution**: Created `src/hok/service/GameDataManager.java` (469 lines, 30 methods) as the central in-memory data store. Dual-storage pattern: ArrayList for iteration, HashMap for O(1) ID lookup across 6 entity types (Player, Admin, Hero, Equipment, Team, MatchRecord). Key features: cascade-safe delete operations (removing a Player cleans up Team membership; removing a Hero cleans up all Player ownership references; removing Equipment cleans up all Hero compatibility references; removing a Team nulls out all member references). Update operations preserve existing relationships. All getter methods return defensive copies. `initializeData()` orchestrates DataInitializer in correct dependency order. Utility methods: `findPlayersOwningHero()`, `findMatchesByTeam()`. Compiled with zero errors.
+- **Related commits**: `eb5bbdb` [AI-Implementation]
+- **Human decision**: CHECKED AND VERIFIED. The cascade logic is thorough — every bidirectional relationship is properly cleaned up on delete. HashMap indexing provides O(1) lookup for all find-by-ID operations. The defensive copy pattern prevents callers from corrupting internal state. Update methods correctly preserve relationships. The initializeData() ordering (teams/heroes/equipment → wiring → players → admin → matches → indexes) respects all dependency chains. Ready for the presentation layer.
 
 ---
 
@@ -75,5 +81,7 @@ No fix tasks executed yet (planned for Prompt 13).
 | 1 | `7e9c867` | [Human] | Create project plan with requirements and class design |
 | 2 | `73ce68a` | [Human] | Approve design document and UML class diagrams |
 | 3 | `3a2e260` | [AI-Implementation] | Add core model classes enums interface and DataInitializer |
+| 4 | `0642fb0` | [Docs] | Update prompts log and agent log for Prompts 01-04 |
+| 5 | `eb5bbdb` | [AI-Implementation] | Add GameDataManager with CRUD and HashMap indexes |
 
-**Quota Status**: [Human] 2/4 | [AI-Architect] 0/3 | [AI-Implementation] 1/3 | [AI-Review] 0/2 | **Total 3/12**
+**Quota Status**: [Human] 2/4 | [AI-Architect] 0/3 | [AI-Implementation] 2/3 | [AI-Review] 0/2 | **Total 5/12**

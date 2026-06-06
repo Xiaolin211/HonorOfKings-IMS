@@ -119,3 +119,36 @@ Design choices: heroes and equipment are created independently, then wired toget
 ### My Decision
 
 **CHECKED AND VERIFIED.** All dataset minimums are met with margin (most are exactly at minimum, which is appropriate — no over-engineering). The data is internally consistent: every player has a team, every team has exactly 5 players, every hero has compatible equipment, every player has heroes. Player passwords follow a predictable pattern ({id}123) which is useful for testing. The data is game-themed but uses neutral English names appropriate for an academic submission. Ready to proceed to GameDataManager.
+
+---
+
+## Prompt 05 — Implementation Agent: GameDataManager
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Implementation |
+| **Related Commit** | `eb5bbdb` |
+
+### AI Response Summary
+
+Created `src/hok/service/GameDataManager.java` (~330 lines, 30 methods) as the central in-memory data store. Compiled successfully with zero errors.
+
+Architecture: Dual-storage pattern — `ArrayList` for ordered iteration, `HashMap<String, T>` for O(1) ID-based lookup. Six entity types managed: Player, Admin, Hero, Equipment, Team, MatchRecord.
+
+Method breakdown:
+- **Initialization** (2): `initializeData()` calls DataInitializer in proper order (teams/heroes/equipment first, then wire compatibility, then players, then admin, then matches, then rebuild indexes). `rebuildAllIndexes()` clears and repopulates all 6 HashMaps.
+- **Get All** (6): `getAllPlayers()` through `getAllMatchRecords()` — all return defensive copies via `new ArrayList<>(list)`.
+- **Find by ID** (6): HashMap.get() for O(1) lookup. Returns null if not found (no exception thrown).
+- **Find by Name** (4): Linear scan with case-insensitive match. Only implemented for Player, Team, Hero, Equipment (Admin has only 1 entry; MatchRecord has no name field).
+- **Add** (5): Checks for null and duplicate ID before inserting. Returns boolean success/failure.
+- **Delete** (5): Cascading cleanup — deletePlayer removes from Team roster; deleteHero removes from all Players' hero lists; deleteEquipment removes from all Heroes' compatible lists; deleteTeam sets all members' team to null; deleteMatchRecord is standalone (association only). Returns false if ID not found.
+- **Update** (5): Replaces entity while preserving relationships. updatePlayer preserves team and heroes; updateHero preserves compatible equipment and reassigns to owners; updateEquipment preserves hero associations; updateTeam transfers all members.
+- **Utility** (2): `findPlayersOwningHero()` returns all players with a given hero; `findMatchesByTeam()` returns all matches involving a team.
+
+Cascade safety: All delete operations handle the bidirectional references correctly, preventing orphaned references or null pointer exceptions downstream.
+
+### My Decision
+
+**CHECKED AND VERIFIED.** The dual-storage pattern (ArrayList + HashMap) is efficient and appropriate for this scale of data. Cascade logic on deletes is thorough — every bidirectional relationship (Team↔Player, Player↔Hero, Hero↔Equipment) is properly cleaned up. The defensive copy pattern on getAll methods ensures callers cannot corrupt internal state. The find-by-name linear scan is acceptable given the small dataset size (≤20 per entity). The update methods correctly preserve existing relationships rather than forcing the caller to re-wire them. Ready to proceed to InputHelper and Main menu skeleton.

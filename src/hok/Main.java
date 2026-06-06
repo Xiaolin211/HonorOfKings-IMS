@@ -1,19 +1,20 @@
 package hok;
 
 import hok.service.GameDataManager;
+import hok.service.RankingService;
+import hok.service.SearchService;
 import hok.util.InputHelper;
 
 /**
  * Entry point for the Honor of Kings Management System.
  * Acts as a console menu ROUTER only — no business logic, no data manipulation.
  * All operations delegate to service classes.
- *
- * Note: Some menu options show "coming soon" until their services are implemented
- * in later prompts (SearchService, RankingService, AuthenticationService, etc.).
  */
 public class Main {
 
     private static GameDataManager dataManager;
+    private static SearchService searchService;
+    private static RankingService rankingService;
     private static boolean running = true;
 
     public static void main(String[] args) {
@@ -22,9 +23,12 @@ public class Main {
         System.out.println("  AI-Assisted System v1.0");
         System.out.println("============================================");
 
-        // Initialize data
+        // Initialize data and services
         dataManager = new GameDataManager();
         dataManager.initializeData();
+        searchService = new SearchService(dataManager);
+        rankingService = new RankingService(dataManager);
+
         System.out.println("Data loaded: " + dataManager.getAllPlayers().size() + " players, "
                 + dataManager.getAllHeroes().size() + " heroes, "
                 + dataManager.getAllEquipment().size() + " equipment, "
@@ -76,30 +80,47 @@ public class Main {
     private static void handlePlayerLookup() {
         System.out.println("\n--- Player Lookup ---");
         String query = InputHelper.readString("Enter player ID or name: ");
-        PlayerLookupStub.lookup(dataManager, query);
+        String result = searchService.lookupPlayer(query);
+        if (result != null) {
+            System.out.println(result);
+        } else {
+            System.out.println("Player not found: " + query);
+        }
     }
 
     private static void handleTeamOverview() {
         System.out.println("\n--- Team Overview ---");
         String query = InputHelper.readString("Enter team ID or name: ");
-        TeamOverviewStub.lookup(dataManager, query);
+        String result = searchService.lookupTeam(query);
+        if (result != null) {
+            System.out.println(result);
+        } else {
+            System.out.println("Team not found: " + query);
+        }
     }
 
     private static void handleHeroDetails() {
         System.out.println("\n--- Hero Details ---");
         String query = InputHelper.readString("Enter hero name: ");
-        HeroDetailsStub.lookup(dataManager, query);
+        String result = searchService.lookupHero(query);
+        if (result != null) {
+            System.out.println(result);
+        } else {
+            System.out.println("Hero not found: " + query);
+        }
     }
 
     private static void handleEquipmentStats() {
         System.out.println("\n--- Equipment Statistics ---");
-        System.out.println("Feature coming in Prompt 08 (RankingService).");
+        System.out.println(rankingService.formatEquipmentRanking());
     }
 
     private static void handleMatchHistory() {
         System.out.println("\n--- Match History ---");
-        int limit = InputHelper.readInt("How many recent matches to show? ", 1, 50);
-        System.out.println("Feature coming in Prompt 07 (SearchService).");
+        String query = InputHelper.readString("Enter team ID/name or player ID/name: ");
+        int limit = InputHelper.readInt("How many matches to show? ", 1, 50);
+        String result = searchService.formatMatchHistory(query, limit);
+        System.out.println(result);
     }
 
     private static void handleLeaderboard() {
@@ -109,13 +130,35 @@ public class Main {
         System.out.println("3. Top by Matches Played");
         System.out.println("4. Top by Custom Score");
         int choice = InputHelper.readInt("Choose ranking: ", 1, 4);
-        System.out.println("Feature coming in Prompt 08 (RankingService).");
+        int n = InputHelper.readInt("How many players to show? ", 1, 15);
+
+        switch (choice) {
+            case 1:
+                System.out.println(rankingService.formatLeaderboard(
+                        "Top Players by Win Rate", rankingService.topByWinRate(n),
+                        true, true, false, false));
+                break;
+            case 2:
+                System.out.println(rankingService.formatLeaderboard(
+                        "Top Players by Level", rankingService.topByLevel(n),
+                        false, true, false, false));
+                break;
+            case 3:
+                System.out.println(rankingService.formatLeaderboard(
+                        "Top Players by Matches", rankingService.topByMatches(n),
+                        false, true, true, false));
+                break;
+            case 4:
+                System.out.println(rankingService.formatLeaderboard(
+                        "Top Players by Custom Score", rankingService.topByCustomScore(n),
+                        false, true, false, true));
+                break;
+        }
     }
 
     private static void handleAdminManagement() {
         System.out.println("\n--- Admin Data Management ---");
         System.out.println("Feature coming in Prompt 10 (AdminService).");
-        System.out.println("Requires login as Admin first (Prompt 09).");
     }
 
     private static void handleSaveData() {
@@ -136,65 +179,5 @@ public class Main {
     private static void handleExit() {
         System.out.println("\nGoodbye!");
         running = false;
-    }
-
-    // ==================== Temporary stubs (will be replaced by real services) ====================
-
-    /**
-     * Temporary stub for Player Lookup.
-     * Will be replaced by SearchService in Prompt 07.
-     */
-    private static class PlayerLookupStub {
-        static void lookup(GameDataManager dm, String query) {
-            // Try by ID first
-            var player = dm.findPlayerById(query);
-            if (player == null) {
-                player = dm.findPlayerByName(query);
-            }
-            if (player != null) {
-                System.out.println(player.getDetailedInfo());
-            } else {
-                System.out.println("Player not found: " + query);
-            }
-        }
-    }
-
-    /**
-     * Temporary stub for Team Overview.
-     * Will be replaced by SearchService in Prompt 07.
-     */
-    private static class TeamOverviewStub {
-        static void lookup(GameDataManager dm, String query) {
-            var team = dm.findTeamById(query);
-            if (team == null) {
-                team = dm.findTeamByName(query);
-            }
-            if (team != null) {
-                System.out.println(team.getDetailedInfo());
-            } else {
-                System.out.println("Team not found: " + query);
-            }
-        }
-    }
-
-    /**
-     * Temporary stub for Hero Details.
-     * Will be replaced by SearchService in Prompt 07.
-     */
-    private static class HeroDetailsStub {
-        static void lookup(GameDataManager dm, String query) {
-            var hero = dm.findHeroByName(query);
-            if (hero != null) {
-                System.out.println(hero.getDetailedInfo());
-                // Also show who owns this hero
-                var owners = dm.findPlayersOwningHero(hero.getId());
-                System.out.println("\nOwned by " + owners.size() + " player(s):");
-                for (var p : owners) {
-                    System.out.println("  " + p.getSummary());
-                }
-            } else {
-                System.out.println("Hero not found: " + query);
-            }
-        }
     }
 }

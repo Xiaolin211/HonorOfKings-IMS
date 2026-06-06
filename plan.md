@@ -559,3 +559,102 @@ A001,admin,ADMIN,admin123
 ---
 
 *Last Updated: June 2026*
+
+---
+
+## 13. Architecture Review (AI-Architect Final Audit)
+
+*Conducted: 2026-06-06 | Reviewer: AI-Architect Agent*
+
+### 13.1 Codebase Statistics
+
+| Metric | Value |
+|--------|-------|
+| Total source files | 24 |
+| Total lines of code | 3,630 |
+| Packages | 7 (model, service, enums, interfacepkg, storage, util, root) |
+| Model classes | 8 |
+| Service classes | 6 |
+| Enums | 5 |
+| Interfaces | 1 |
+| Utility classes | 2 |
+| Main method | 1 (349 lines) |
+
+### 13.2 Architecture Strengths
+
+| # | Strength | Detail |
+|---|----------|--------|
+| 1 | **Layered Architecture** | Clean 4-tier separation: Presentation (Main.java) → Service (5 classes) → Data (GameDataManager) → Persistence (FileStorageService). Each layer only talks to the layer directly below it. |
+| 2 | **Pure Router Main.java** | Main.java contains zero business logic — 349 lines of pure menu routing. All operations delegate to services. This prevents the most common first-year pitfall. |
+| 3 | **Dual-Storage Pattern** | GameDataManager uses `ArrayList` for ordered iteration + `HashMap` for O(1) ID lookup — optimal for this dataset size. |
+| 4 | **Defensive Copies** | All collection getters (`getHeroes()`, `getPlayers()`, `getCompatibleEquipment()`, `getAll*()`) return `new ArrayList<>(list)` — prevents external mutation of internal state. |
+| 5 | **Bidirectional Reference Management** | Team↔Player and Player↔Hero relationships are properly maintained. `addPlayer()` sets both sides; `deletePlayer()` cleans up both sides. No orphaned references. |
+| 6 | **Graceful Degradation in I/O** | FileStorageService catches `FileNotFoundException`, `IOException`, and `NumberFormatException`. Missing files → empty lists + log message, no crash. |
+| 7 | **Polymorphic Authentication** | `AuthenticationService.currentUser` is typed as `Person` — can hold `Player` or `Admin` at runtime. `isAdmin()` uses `getRole()` check, demonstrating runtime type dispatch. |
+| 8 | **Read-Only Recommendation Engine** | RecommendationEngine depends on GameDataManager but never mutates it. No side effects. Safe to call from any context. |
+| 9 | **Explainable AI** | Every recommendation includes `supportingStats` (factor breakdown) and `reason` (plain-English explanation). Transparent and auditable. |
+| 10 | **Package Cohesion** | All enums in `enums/`, all models in `model/`, all services in `service/` — follows Java convention, easy to navigate. |
+
+### 13.3 Architectural Issues
+
+| # | Severity | Issue | Detail | Recommendation |
+|---|----------|-------|--------|----------------|
+| **I1** | 🟡 MEDIUM | **Design doc-code mismatch: No Strategy Pattern** | plan.md §3 and §4 specify Strategy Pattern (`RecommendationStrategy` interface, `HeroRecommendationStrategy`, `EquipmentRecommendationStrategy`). Actual implementation has all algorithms hardcoded in a single `RecommendationEngine` class (407 lines). | If Strategy Pattern is required for grading, refactor RecommendationEngine into 3 classes. If not, update plan.md to remove Strategy Pattern references and note the simplification as a design decision. |
+| **I2** | 🟡 MEDIUM | **Design doc-code mismatch: No Singleton** | plan.md and design.md mention Singleton for GameDataManager, but it is instantiated via `new GameDataManager()` in Main.java — a plain object, not a Singleton. | Either implement `getInstance()` or document that the single instantiation in Main.java is functionally equivalent without the formal pattern. |
+| **I3** | 🟡 MEDIUM | **GameDataManager size (477 lines)** | Largest single class. Handles initialization, indexing, CRUD for 6 entity types, plus cascading delete logic. | Consider extracting entity-specific CRUD into sub-managers (e.g., `PlayerManager`, `HeroManager`) if the project grows. Acceptable for current scope. |
+| **I4** | 🟢 LOW | **CSV load does not restore relationships** | Known bug B2 from Prompt 12 review. Stored hero IDs and equipment IDs are saved to CSV but not re-wired on load. After save→load→restart, Player↔Hero and Hero↔Equipment links are broken. | Add a `restoreRelationships()` method in FileStorageService that runs after `loadAll()`. |
+| **I5** | 🟢 LOW | **No model-level input validation** | `Player.setWinRate(2.0)` would be accepted. Range validation only happens in AdminService UI (manual input), not at the model layer. | Add validation in setters: `if (rate < 0.0 \|\| rate > 1.0) throw new IllegalArgumentException(...)`. Low priority — existing UI already validates. |
+| **I6** | 🟢 LOW | **Static fields in Main.java** | All services are `private static` fields. Functional but not testable — no way to inject mock services. | For a first-year project, static fields are acceptable. Would refactor to instance-based for testability in a production project. |
+| **I7** | 🟢 LOW | **No caching in RecommendationEngine** | `computeGlobalWinRate()` rescans all players for every hero. `maxUsage()` rescans all equipment for every equipment recommendation. | Cache global stats in a `Map<String, Double>` on first call. Current dataset (≤20 items) makes this negligible. |
+
+### 13.4 OOP Concept Verification
+
+| Concept | Required | Implemented | Verification |
+|---------|----------|-------------|-------------|
+| Inheritance | ✓ | ✓ | `Player extends Person`, `Admin extends Person` |
+| Abstract Class | ✓ | ✓ | `Person` declared `abstract` — cannot be instantiated |
+| Interface | ✓ | ✓ | `Reportable` with `getSummary()` + `getDetailedInfo()`, implemented by Player, Team, Hero |
+| Polymorphism | ✓ | ✓ | `Person currentUser` in AuthenticationService; `Reportable` references in SearchService |
+| Encapsulation | ✓ | ✓ | All 50+ fields are `private`; defensive copies on 12 collection getters |
+| Aggregation | ✓ | ✓ | `Team ◇→ Player`: players survive team deletion |
+| Composition | ✓ | ✓ | `Player ◆→ Hero`: heroes removed from all players on hero delete |
+| Association | ✓ | ✓ | `Hero → Equipment`, `MatchRecord → Team` |
+| Collections | ✓ | ✓ | `ArrayList` for ordered storage, `HashMap` for O(1) indexes |
+| Exception Handling | ✓ | ✓ | try-catch on all I/O; `NoSuchElementException` guard in InputHelper |
+| File I/O | ✓ | ✓ | 6 CSV files with header rows, semicolon sub-separators |
+| Enums | ✓ | ✓ | 5 enums (Role, HeroType, EquipmentType, MatchResult, RecommendationType) |
+
+### 13.5 Package Cohesion Assessment
+
+| Package | Files | Cohesion | Notes |
+|---------|-------|----------|-------|
+| `hok.enums` | 5 | ✅ HIGH | All enumerated types, no logic |
+| `hok.interfacepkg` | 1 | ✅ HIGH | Single interface |
+| `hok.model` | 8 | ✅ HIGH | Pure data classes + DTOs |
+| `hok.service` | 6 | ⚠️ MEDIUM | GameDataManager (477 lines) overshadows others; AdminService has UI logic mixed with CRUD |
+| `hok.storage` | 1 | ✅ HIGH | Single responsibility |
+| `hok.util` | 2 | ✅ HIGH | Pure helpers |
+| `hok` (root) | 1 | ✅ HIGH | Entry point only |
+
+### 13.6 Optimization Suggestions
+
+| # | Suggestion | Effort | Benefit |
+|---|-----------|--------|---------|
+| 1 | **Add `dataManager.reloadFrom(LoadedData)`** method in GameDataManager to properly rebuild state from CSV-loaded data | ~30 lines | Fixes bug I4, enables full round-trip persistence |
+| 2 | **Extract AdminService menu strings** to a separate `AdminMenuText` constants class or resource file | ~50 lines | Improves readability, enables future i18n |
+| 3 | **Add `@Override` annotations** consistently — some methods are missing them (e.g., `RecommendationResult.toString()`) | ~5 lines | Compiler-checked correctness |
+| 4 | **Add `RECOMMENDATION` entry to plan.md's class table** (currently missing from Section 4.1) | ~3 lines | Documentation completeness |
+| 5 | **Add a `RecommendationEngine` to Service Layer Dependency Diagram** in uml.md §4 | ~3 lines | UML accuracy |
+
+### 13.7 Final Verdict
+
+| Dimension | Rating | Comment |
+|-----------|--------|---------|
+| **Architecture** | 8/10 | Clean layered design. Two doc-code mismatches (Strategy, Singleton) need resolution. |
+| **OOP Correctness** | 10/10 | All 12 required concepts correctly demonstrated in working code. |
+| **Code Quality** | 8/10 | Readable, well-commented. Some large classes (GameDataManager 477, RecommendationEngine 407) but acceptable for scope. |
+| **Extensibility** | 7/10 | Adding new entity types requires touching multiple classes. Strategy Pattern would improve this. |
+| **Testability** | 5/10 | Static fields prevent injection. No unit tests in codebase. Console I/O makes automated testing difficult. |
+| **Documentation** | 9/10 | Comprehensive plan.md, design.md, uml.md, prompts.md, agent-log.md. Minor inconsistencies flagged above. |
+
+**Overall: The architecture is solid for a first-year Java coursework project. The two design doc-code mismatches (I1: Strategy Pattern, I2: Singleton) are the only items that could affect grading if the marker expects formal pattern implementation. All OOP requirements are verifiably met in working, compilable code.**

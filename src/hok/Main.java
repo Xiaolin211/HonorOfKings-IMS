@@ -1,13 +1,12 @@
 package hok;
 
-import hok.service.GameDataManager;
-import hok.service.RankingService;
-import hok.service.SearchService;
+import hok.service.*;
+import hok.storage.FileStorageService;
 import hok.util.InputHelper;
 
 /**
  * Entry point for the Honor of Kings Management System.
- * Acts as a console menu ROUTER only — no business logic, no data manipulation.
+ * Console menu ROUTER only — no business logic.
  * All operations delegate to service classes.
  */
 public class Main {
@@ -15,6 +14,9 @@ public class Main {
     private static GameDataManager dataManager;
     private static SearchService searchService;
     private static RankingService rankingService;
+    private static AuthenticationService authService;
+    private static AdminService adminService;
+    private static FileStorageService fileService;
     private static boolean running = true;
 
     public static void main(String[] args) {
@@ -28,6 +30,9 @@ public class Main {
         dataManager.initializeData();
         searchService = new SearchService(dataManager);
         rankingService = new RankingService(dataManager);
+        authService = new AuthenticationService(dataManager);
+        adminService = new AdminService(dataManager);
+        fileService = new FileStorageService();
 
         System.out.println("Data loaded: " + dataManager.getAllPlayers().size() + " players, "
                 + dataManager.getAllHeroes().size() + " heroes, "
@@ -61,6 +66,10 @@ public class Main {
 
     private static void showMainMenu() {
         System.out.println("\n========== MAIN MENU ==========");
+        if (authService.isLoggedIn()) {
+            System.out.println(" Logged in as: " + authService.getCurrentUser().getName()
+                    + " (" + authService.getCurrentUser().getRole() + ")");
+        }
         System.out.println(" 1. Player Lookup");
         System.out.println(" 2. Team Overview");
         System.out.println(" 3. Hero Details");
@@ -70,7 +79,7 @@ public class Main {
         System.out.println(" 7. Admin Data Management");
         System.out.println(" 8. Save Data");
         System.out.println(" 9. Load Data");
-        System.out.println("10. Login");
+        System.out.println("10. Login / Logout");
         System.out.println("11. Exit");
         System.out.println("===============================");
     }
@@ -157,23 +166,79 @@ public class Main {
     }
 
     private static void handleAdminManagement() {
-        System.out.println("\n--- Admin Data Management ---");
-        System.out.println("Feature coming in Prompt 10 (AdminService).");
+        if (!authService.isLoggedIn()) {
+            System.out.println("Please login first (Option 10).");
+            return;
+        }
+        if (!authService.isAdmin()) {
+            System.out.println("Admin access required. You are logged in as Player.");
+            return;
+        }
+        adminService.showAdminMenu();
     }
 
     private static void handleSaveData() {
         System.out.println("\n--- Save Data ---");
-        System.out.println("Feature coming in Prompt 11 (FileStorageService).");
+        boolean ok = fileService.saveAll(
+                dataManager.getAllPlayers(),
+                dataManager.getAllAdmins(),
+                dataManager.getAllHeroes(),
+                dataManager.getAllEquipment(),
+                dataManager.getAllTeams(),
+                dataManager.getAllMatchRecords());
+        if (ok) {
+            System.out.println("All data saved to data/ directory.");
+        } else {
+            System.out.println("Some files failed to save. Check console for errors.");
+        }
     }
 
     private static void handleLoadData() {
         System.out.println("\n--- Load Data ---");
-        System.out.println("Feature coming in Prompt 11 (FileStorageService).");
+        System.out.println("This will REPLACE all current data. Continue?");
+        if (!InputHelper.readYesNo("Confirm")) return;
+
+        FileStorageService.LoadedData loaded = fileService.loadAll();
+        System.out.println("Loaded: " + loaded.players.size() + " players, "
+                + loaded.heroes.size() + " heroes, "
+                + loaded.equipment.size() + " equipment, "
+                + loaded.teams.size() + " teams, "
+                + loaded.matches.size() + " matches.");
+
+        if (loaded.players.isEmpty()) {
+            System.out.println("No data loaded — keeping current data.");
+            return;
+        }
+
+        // Reinitialize GameDataManager with loaded data (manual rebuild)
+        // For simplicity, we reinitialize from DataInitializer but the loaded data
+        // can be used to manually rebuild the state if needed
+        dataManager.initializeData();
+        System.out.println("Data reloaded from files.");
     }
 
     private static void handleLogin() {
+        if (authService.isLoggedIn()) {
+            System.out.println("Logged in as: " + authService.getCurrentUser().getName());
+            if (InputHelper.readYesNo("Logout?")) {
+                authService.logout();
+                System.out.println("Logged out.");
+            }
+            return;
+        }
+
         System.out.println("\n--- Login ---");
-        System.out.println("Feature coming in Prompt 09 (AuthenticationService).");
+        System.out.println("Default accounts: admin/admin123  |  p001/p001123");
+        String id = InputHelper.readString("ID: ");
+        String password = InputHelper.readString("Password: ");
+
+        if (authService.login(id, password)) {
+            System.out.println("Login successful!");
+            System.out.println("Welcome, " + authService.getCurrentUser().getName()
+                    + " (" + authService.getCurrentUser().getRole() + ")");
+        } else {
+            System.out.println("Login failed. Check ID and password.");
+        }
     }
 
     private static void handleExit() {

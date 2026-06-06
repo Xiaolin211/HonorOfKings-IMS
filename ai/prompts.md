@@ -449,3 +449,34 @@ Implemented the full Recommendation Engine based on designs from Prompts 12a/12b
 ### My Decision
 
 **CHECKED AND VERIFIED.** The recommendation engine correctly analyzes player hero pools and produces type-diverse recommendations with explainable reasoning. All 15 players and 15 heroes are queryable. The weighted formulas produce scores in the expected range. Factor breakdowns provide full transparency. The engine is read-only — no risk to existing data. Ready for final review and documentation.
+
+---
+
+## Prompt 13a — Fix Agent: Admin delete crash and infinite loop
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Fix |
+| **Related Commit** | `a4b4ba3` |
+
+### AI Response Summary
+
+Fixed two bugs causing program crash and infinite loop during Admin delete operations:
+
+**Bug 1 — InputHelper.java NoSuchElementException crash:**
+- Root cause: `scanner.nextLine()` threw uncaught `NoSuchElementException` when piped input was exhausted
+- Fix: Added `safeNextLine()` private method wrapping all Scanner reads with `hasNextLine()` guard and `NoSuchElementException`/`IllegalStateException` catch blocks
+- Additional: When input stream is exhausted, prints clear message and calls `System.exit(0)` instead of looping infinitely or crashing
+- Applied to all 5 public methods: readInt, readInt(range), readDouble, readString, readYesNo, pressEnterToContinue
+
+**Bug 2 — Team.removePlayer() ConcurrentModificationException:**
+- Root cause: for-each loop calling `players.remove(p)` inside iteration body
+- Fix: Replaced with `Iterator<Player>` pattern — `it.next()` + `it.remove()`, standard safe removal
+
+**Verification**: Tested TC-19 flow (Admin login → delete p015 → list players → return to menu). Delete succeeds with "Player deleted." Program exits gracefully with "[Input stream ended. Exiting program.]" instead of crashing or looping infinitely.
+
+### My Decision
+
+**ACCEPTED.** Both fixes are minimal and targeted. The Iterator pattern is the standard Java idiom for safe collection removal during iteration. The Scanner guard with graceful exit is appropriate for a console application — interactive users will never trigger the exit path (System.in always has nextLine), while automated/piped input gets a clean termination instead of a crash or infinite loop.

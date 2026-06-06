@@ -108,9 +108,13 @@ No documentation finalization tasks executed yet (planned for Prompt 14).
 
 ## 5. Fix Agent
 
-**Total contributions**: 0
+**Total contributions**: 1
 
-No fix tasks executed yet (planned for Prompt 13).
+### Contribution 1: Admin Delete Crash Fix (Prompt 13a)
+
+- **Main contribution**: Fixed two bugs: (1) InputHelper NoSuchElementException — added `safeNextLine()` wrapper with `hasNextLine()` guard and graceful System.exit; (2) Team.removePlayer() ConcurrentModificationException — replaced for-each with Iterator pattern. Verified TC-19 passes.
+- **Related commits**: `a4b4ba3` [Fix]
+- **Human decision**: ACCEPTED. Minimal fixes, standard Java idioms.
 
 ---
 
@@ -134,5 +138,7 @@ No fix tasks executed yet (planned for Prompt 13).
 | 14 | `6654b36` | [AI-Architect] | Add recommendation engine to plan.md |
 | 15 | `2bc3ab1` | [Docs] | Update prompts and agent log with plan.md update entry |
 | 16 | `24f965b` | [AI-Implementation] | Implement recommendation engine with weighted scoring |
+| 17 | `baf6ca0` | [Docs] | Update prompts and agent log with recommendation engine implementation |
+| 18 | `a4b4ba3` | [Fix] | Prevent crash and infinite loop in admin delete operations |
 
-**Quota Status**: [Human] 2/4 | [AI-Architect] 2/3 | [AI-Implementation] 6/3 ✓ | [AI-Review] 0/2 | **Total 16/12 ✓**
+**Quota Status**: [Human] 2/4 | [AI-Architect] 2/3 | [AI-Implementation] 6/3 ✓ | [AI-Review] 0/2 | **Total 18/12 ✓**

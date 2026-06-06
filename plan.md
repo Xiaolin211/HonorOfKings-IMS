@@ -658,3 +658,32 @@ A001,admin,ADMIN,admin123
 | **Documentation** | 9/10 | Comprehensive plan.md, design.md, uml.md, prompts.md, agent-log.md. Minor inconsistencies flagged above. |
 
 **Overall: The architecture is solid for a first-year Java coursework project. The two design doc-code mismatches (I1: Strategy Pattern, I2: Singleton) are the only items that could affect grading if the marker expects formal pattern implementation. All OOP requirements are verifiably met in working, compilable code.**
+
+---
+
+## 14. Code Quality Review (AI-Review Final Audit)
+
+*Conducted: 2026-06-06 | Reviewer: AI-Review Agent*
+
+### 14.1 Issues Found
+
+| ID | Severity | File | Line | Issue | Suggested Fix |
+|----|----------|------|------|-------|---------------|
+| R1 | LOW | 9 files | — | Wildcard imports (14 instances of `import X.*`) | Replace with explicit imports |
+| R2 | LOW | RankingService.java | 170 | Leaderboard `%` display misalignment (confirmed by TC-11) | Use `String.format("%.1f%%", ...)` inside format column |
+| R3 | INFO | Main.java | 199 | `var` keyword inconsistent with explicit types used elsewhere | Use `for (Player p : ...)` |
+| R4 | INFO | SearchService.java | 45 | Manual string concatenation with index loop | Use `String.join(", ", names)` |
+| R5 | INFO | GameDataManager | — | `findEquipmentByName()` defined but never called | Keep (future-proof) or add caller |
+
+### 14.2 Quality Scores
+
+| Dimension | Score | Notes |
+|-----------|-------|-------|
+| Code Style | 8/10 | Wildcard imports and var inconsistency |
+| Encapsulation | 10/10 | All private, defensive copies on 12 getters |
+| Error Handling | 8/10 | I/O layer robust; no runtime exception handling in business logic |
+| Efficiency | 8/10 | HashMap indexes; Recommender uncached (acceptable) |
+| Readability | 9/10 | Clear names, consistent Javadoc |
+| Null Safety | 8/10 | 25+ null checks; minor edge NPE risk |
+| Best Practices | 7/10 | Iterator removal, defensive copies; wildcard imports |
+| **Overall** | **8.3/10** | Excellent for first-year coursework |

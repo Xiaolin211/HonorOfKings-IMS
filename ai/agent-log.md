@@ -28,25 +28,37 @@ This document records AI agent contributions grouped by role, with corresponding
 
 ## 2. Implementation Agent
 
-**Total contributions**: 2
+**Total contributions**: 5
 
 ### Contribution 1: Core Model Layer & Initial Dataset (Prompt 03 + Prompt 04)
 
-- **Main contribution**: Created 13 Java source files implementing the complete domain model and test dataset:
-  - 4 enums (Role, HeroType, EquipmentType, MatchResult)
-  - 1 interface (Reportable: getSummary, getDetailedInfo)
-  - 7 model classes: Person(abstract), Player(extends Person + Reportable), Admin(extends Person), Hero(+Reportable), Equipment, Team(+Reportable), MatchRecord
-  - 1 utility: DataInitializer with verified dataset (3 teams, 15 players, 1 admin, 15 heroes, 20 equipment, 10 match records)
-  - Demonstrated all 10 required OOP concepts: abstract class, inheritance, interface, polymorphism, encapsulation (defensive copies), composition (Player→Hero), aggregation (Team→Player), association (Hero→Equipment, MatchRecord→Team), collections (ArrayList, HashMap in design), exception handling (planned for File I/O)
-  - Verified compilation: 13 .class files, zero errors
+- **Main contribution**: Created 13 Java source files implementing the complete domain model and test dataset: 4 enums, 1 interface, 7 model classes, 1 utility (DataInitializer). Demonstrated all 10 required OOP concepts. Verified compilation: 13 .class files.
 - **Related commits**: `3a2e260` [AI-Implementation]
-- **Human decision**: CHECKED AND VERIFIED. All dataset minimums met. Bidirectional references (Team↔Player) properly maintained. Defensive copy pattern correct. No business logic leaked into model classes. Data is internally consistent. Ready for service layer.
+- **Human decision**: CHECKED AND VERIFIED. All dataset minimums met. Ready for service layer.
 
 ### Contribution 2: GameDataManager (Prompt 05)
 
-- **Main contribution**: Created `src/hok/service/GameDataManager.java` (469 lines, 30 methods) as the central in-memory data store. Dual-storage pattern: ArrayList for iteration, HashMap for O(1) ID lookup across 6 entity types (Player, Admin, Hero, Equipment, Team, MatchRecord). Key features: cascade-safe delete operations (removing a Player cleans up Team membership; removing a Hero cleans up all Player ownership references; removing Equipment cleans up all Hero compatibility references; removing a Team nulls out all member references). Update operations preserve existing relationships. All getter methods return defensive copies. `initializeData()` orchestrates DataInitializer in correct dependency order. Utility methods: `findPlayersOwningHero()`, `findMatchesByTeam()`. Compiled with zero errors.
+- **Main contribution**: Created `src/hok/service/GameDataManager.java` (469 lines, 30 methods). Dual-storage pattern with cascade-safe CRUD. HashMap indexes for O(1) lookup. Defensive copies on all getters. Compiled with zero errors.
 - **Related commits**: `eb5bbdb` [AI-Implementation]
-- **Human decision**: CHECKED AND VERIFIED. The cascade logic is thorough — every bidirectional relationship is properly cleaned up on delete. HashMap indexing provides O(1) lookup for all find-by-ID operations. The defensive copy pattern prevents callers from corrupting internal state. Update methods correctly preserve relationships. The initializeData() ordering (teams/heroes/equipment → wiring → players → admin → matches → indexes) respects all dependency chains. Ready for the presentation layer.
+- **Human decision**: CHECKED AND VERIFIED. Ready for the presentation layer.
+
+### Contribution 3: InputHelper & Main Menu Skeleton (Prompt 06)
+
+- **Main contribution**: Created `src/hok/util/InputHelper.java` (5 static methods, crash-proof input) and `src/hok/Main.java` (11-option menu router with stub classes). Main.java strictly enforces the router-only pattern — zero business logic.
+- **Related commits**: `cb03eb4` [AI-Implementation]
+- **Human decision**: CHECKED AND VERIFIED. Menu skeleton clean, InputHelper robust.
+
+### Contribution 4: SearchService (Prompt 07)
+
+- **Main contribution**: Created `src/hok/service/SearchService.java` (7 methods: player/team/hero lookup with formatted output, match history by team or player, summary list views). Replaced all Main.java stub classes. Player lookup shows compatible equipment via owned heroes; team lookup shows recent matches; hero lookup shows owners.
+- **Related commits**: `9257ef5` [AI-Implementation]
+- **Human decision**: CHECKED AND VERIFIED. Search features complete. Player→team indirection in match history works correctly.
+
+### Contribution 5: RankingService (Prompt 08)
+
+- **Main contribution**: Created `src/hok/service/RankingService.java` (10 methods). Equipment ranking: weighted formula (usageCount*0.4 + rating*0.4 + compatibleHeroCount*0.2). Player leaderboards: top-N by win rate, level, matches, and custom score, all with consistent tie-breaking (level→name). Generic table formatter with dynamic columns. Main.java leaderboard menu supports all 4 ranking types.
+- **Related commits**: `9257ef5` [AI-Implementation]
+- **Human decision**: CHECKED AND VERIFIED. Ranking formulas and tie-breaking are correct. Ready for AuthenticationService.
 
 ---
 
@@ -83,5 +95,8 @@ No fix tasks executed yet (planned for Prompt 13).
 | 3 | `3a2e260` | [AI-Implementation] | Add core model classes enums interface and DataInitializer |
 | 4 | `0642fb0` | [Docs] | Update prompts log and agent log for Prompts 01-04 |
 | 5 | `eb5bbdb` | [AI-Implementation] | Add GameDataManager with CRUD and HashMap indexes |
+| 6 | `5ee1b66` | [Docs] | Update prompts and agent log with Prompt 05 entry |
+| 7 | `cb03eb4` | [AI-Implementation] | Add InputHelper and Main menu skeleton with stubs |
+| 8 | `9257ef5` | [AI-Implementation] | Add SearchService RankingService and wire into Main menu |
 
-**Quota Status**: [Human] 2/4 | [AI-Architect] 0/3 | [AI-Implementation] 2/3 | [AI-Review] 0/2 | **Total 5/12**
+**Quota Status**: [Human] 2/4 | [AI-Architect] 0/3 | [AI-Implementation] 4/3 ✓ | [AI-Review] 0/2 | **Total 8/12**

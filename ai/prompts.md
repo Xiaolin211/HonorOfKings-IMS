@@ -152,3 +152,89 @@ Cascade safety: All delete operations handle the bidirectional references correc
 ### My Decision
 
 **CHECKED AND VERIFIED.** The dual-storage pattern (ArrayList + HashMap) is efficient and appropriate for this scale of data. Cascade logic on deletes is thorough — every bidirectional relationship (Team↔Player, Player↔Hero, Hero↔Equipment) is properly cleaned up. The defensive copy pattern on getAll methods ensures callers cannot corrupt internal state. The find-by-name linear scan is acceptable given the small dataset size (≤20 per entity). The update methods correctly preserve existing relationships rather than forcing the caller to re-wire them. Ready to proceed to InputHelper and Main menu skeleton.
+
+---
+
+## Prompt 06 — Implementation Agent: InputHelper and Main menu skeleton
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Implementation |
+| **Related Commit** | `cb03eb4` |
+
+### AI Response Summary
+
+Created two files establishing the presentation layer:
+
+- `src/hok/util/InputHelper.java` (~70 lines): 5 static methods (readInt, readInt with range, readDouble, readString, readYesNo, pressEnterToContinue). All methods loop until valid input — no exceptions escape. Uses a single shared Scanner. Input validation handles empty strings, non-numeric input, and out-of-range values.
+
+- `src/hok/Main.java` (~140 lines): Console menu router with 11 options (Player Lookup, Team Overview, Hero Details, Equipment Stats, Match History, Leaderboard, Admin Management, Save/Load Data, Login, Exit). Initializes GameDataManager on startup, displays data summary. Uses temporary stub classes (PlayerLookupStub, TeamOverviewStub, HeroDetailsStub) for features not yet backed by real services. Menu 0-11 numeric input with range validation.
+
+Design principle: Main.java contains zero business logic — pure routing via switch statement. Stubs are private static inner classes that will be replaced when real services are implemented.
+
+### My Decision
+
+**CHECKED AND VERIFIED.** The menu skeleton is clean and follows the router-only pattern. InputHelper is robust — no invalid input can crash the program. Stub classes are properly scoped as private inner classes to prevent accidental use elsewhere. The data summary on startup provides immediate feedback that initialization succeeded. Ready to proceed to SearchService (Prompt 07) which will replace the stubs.
+
+---
+
+## Prompt 07 — Implementation Agent: Search features
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Implementation |
+| **Related Commit** | `9257ef5` |
+
+### AI Response Summary
+
+Created `src/hok/service/SearchService.java` (~170 lines, 7 methods) and removed all stub classes from Main.java.
+
+Key methods:
+- `lookupPlayer(query)`: Searches by ID then name, returns formatted details including owned heroes' compatible equipment lists.
+- `lookupTeam(query)`: Searches by ID then name, returns full team details plus 5 most recent matches.
+- `lookupHero(name)`: Searches by name, returns full stats with compatible equipment and list of player owners.
+- `getMatchHistory(query, limit)`: Accepts team ID/name or player ID/name. For player queries, finds the player's team first, then fetches that team's matches. Returns sublist limited to `limit`.
+- `formatMatchHistory(query, limit)`: Formatted string wrapper for getMatchHistory.
+- `listAllPlayers()`, `listAllTeams()`, `listAllHeroes()`: Summary views using Reportable.getSummary().
+
+Main.java was updated to instantiate SearchService and delegate all player/team/hero/match lookups to it. All stub inner classes removed. Match History now accepts both team and player queries.
+
+### My Decision
+
+**CHECKED AND VERIFIED.** The SearchService correctly centralizes all query logic. The lookupPlayer method goes beyond requirements by also showing compatible equipment derived from owned heroes. The match history handles the player→team indirection correctly. Returns null (not exceptions) for not-found queries, with Main.java handling the null check. Ready for RankingService.
+
+---
+
+## Prompt 08 — Implementation Agent: Equipment statistics and leaderboard
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Implementation |
+| **Related Commit** | `9257ef5` |
+
+### AI Response Summary
+
+Created `src/hok/service/RankingService.java` (~200 lines, 10 methods):
+
+Equipment ranking:
+- `rankEquipment()`: Sorts all equipment by weighted score: `usageCount * 0.4 + rating * 0.4 + compatibleHeroCount * 0.2`. The `compatibleHeroCount` is computed dynamically by scanning all heroes. Returns sorted list.
+- `formatEquipmentRanking()`: Tabular output with rank, name, score, usage count, rating, and hero count columns.
+
+Player leaderboards:
+- `topByWinRate(n)`: Sorted by win rate descending. Tie-break: level descending → name ascending.
+- `topByLevel(n)`: Sorted by level descending. Tie-break: win rate → name.
+- `topByMatches(n)`: Sorted by total matches descending. Tie-break: level → name.
+- `topByCustomScore(n)`: Sorted by `winRate*0.5 + (level/30)*0.3 + (matches/300)*0.2`. Tie-break: level → name.
+- `formatLeaderboard(title, players, ...flags)`: Generic table formatter with dynamic column visibility controlled by boolean flags.
+
+Main.java updated with full leaderboard menu: user selects ranking type (1-4) and count (1-15), then formatted table is displayed. Equipment Statistics menu now shows the full ranked table.
+
+### My Decision
+
+**CHECKED AND VERIFIED.** The weighted equipment formula is reasonable for this domain. Tie-breaking is consistently implemented across all four leaderboard types. The generic formatLeaderboard method with boolean flags avoids code duplication. Custom score normalization (dividing by 30 and 300) keeps all three components in comparable ranges. Ready to proceed to AuthenticationService.

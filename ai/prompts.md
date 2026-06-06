@@ -409,3 +409,43 @@ Updated `plan.md` with 6 targeted insertions covering the full Recommendation En
 ### My Decision
 
 **ACCEPTED.** The plan is now comprehensive — covering architecture (UML + design docs from Prompt 12a) and project management (plan.md from Prompt 12b). The Strategy Pattern approach satisfies extensibility requirements. The 10 test cases provide adequate coverage for the recommendation feature. The 6 REC phases align with the existing 9-stage timeline. Ready for recommendation engine implementation.
+
+---
+
+## Prompt 13 — Implementation Agent: Recommendation Engine
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Implementation |
+| **Related Commit** | `24f965b` |
+
+### AI Response Summary
+
+Implemented the full Recommendation Engine based on designs from Prompts 12a/12b. Created 3 new files and updated Main.java:
+
+- `src/hok/enums/RecommendationType.java`: HERO, EQUIPMENT enum
+- `src/hok/model/RecommendationResult.java`: DTO with recommendedId, recommendedName, type, confidence (0.0-1.0), reason (human-readable), supportingStats (factor breakdown map). Methods: toDetailedString() for formatted factor output, toString() for one-line summary.
+- `src/hok/service/RecommendationEngine.java` (~340 lines): Core engine with 4 public API methods and 12 private helpers.
+
+**Hero algorithm** (5 factors, all verified producing scores in [0,1]):
+- typeMatch (0.30): 1.0 if hero type not owned, 0.5 if 1 owned, 0.0 if 2+ owned → encourages diversity
+- winRateFactor (0.25): average win rate of all players owning this hero
+- popularity (0.20): normalized owner count / total players
+- teamSynergy (0.15): 1.0 - (ratio × 6), rewards underrepresented types across the team
+- levelMatch (0.10): 1.0 - |playerLevel - avgOwnerLevel| / 30
+
+**Equipment algorithm** (4 factors):
+- heroCompatibility (0.30): fraction of player's heroes compatible with this equipment
+- usageFactor (0.25): normalized usage count
+- ratingFactor (0.25): rating / 10.0
+- typeSynergy (0.20): equipment type mapped to dominant hero type (e.g., ATTACK→MARKSMAN/ASSASSIN/WARRIOR, MAGIC→MAGE, DEFENSE→TANK/WARRIOR)
+
+**Main.java integration**: Added menu option 7 "AI Recommendation Engine" with 4 sub-options. Player recommendation lists all 15 players first, then asks for ID and count. Hero-by-type and equipment-by-type use numeric type selection.
+
+**Verified**: Compiled with zero errors. Smoke tested — recommended SUPPORT heroes (Cai Wenji 75.3%, Da Qiao 73.7%) and MARKSMAN (Hou Yi 70.6%) for Alex (p001, TANK-heavy). Factor breakdowns shown correctly. All confidence scores in [0,1] range.
+
+### My Decision
+
+**CHECKED AND VERIFIED.** The recommendation engine correctly analyzes player hero pools and produces type-diverse recommendations with explainable reasoning. All 15 players and 15 heroes are queryable. The weighted formulas produce scores in the expected range. Factor breakdowns provide full transparency. The engine is read-only — no risk to existing data. Ready for final review and documentation.

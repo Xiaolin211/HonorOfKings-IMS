@@ -40,7 +40,7 @@ This document records AI agent contributions grouped by role, with corresponding
 
 ## 2. Implementation Agent
 
-**Total contributions**: 6
+**Total contributions**: 7
 
 ### Contribution 1: Core Model Layer & Initial Dataset (Prompt 03 + Prompt 04)
 
@@ -77,6 +77,12 @@ This document records AI agent contributions grouped by role, with corresponding
 - **Main contribution**: Completed the service layer with 3 services and wired everything into Main.java. AuthenticationService: login/logout with polymorphic Person reference, role-based access control. AdminService: interactive CRUD menus for all 5 entity types with cascade safety. FileStorageService: full CSV save/load with graceful error handling (FileNotFoundException, NumberFormatException), semicolon sub-separators for multi-valued fields. All 6 CSV files verified on disk. Full smoke test passed: Player Lookup, Team Overview, Hero Details, Equipment Ranking, Leaderboard, Login, Admin Management, Save/Load all confirmed working.
 - **Related commits**: `fb61331` [AI-Implementation]
 - **Human decision**: CHECKED AND VERIFIED. All core functions compile and run. The system is feature-complete per coursework requirements. Authentication polymorphism works correctly. Admin CRUD cascade behavior is proper. File I/O handles all edge cases. Ready for review phase.
+
+### Contribution 7: Recommendation Engine Implementation (Prompt 13)
+
+- **Main contribution**: Implemented the full Recommendation Engine (3 new files, 1 modified). RecommendationType enum, RecommendationResult DTO with factor breakdown, RecommendationEngine (340 lines, 4 public + 12 private methods). Hero algorithm: 5-factor weighted scoring (typeMatch 0.30, winRate 0.25, popularity 0.20, teamSynergy 0.15, levelMatch 0.10). Equipment algorithm: 4-factor weighted scoring (heroCompat 0.30, usage 0.25, rating 0.25, typeSynergy 0.20). Main.java updated with dedicated 4-option recommendation sub-menu. Smoke tested: recommended SUPPORT/MARKSMAN heroes for TANK-heavy player Alex with factor breakdowns. All confidence scores in [0,1].
+- **Related commits**: `24f965b` [AI-Implementation]
+- **Human decision**: CHECKED AND VERIFIED. Engine correctly produces type-diverse, explainable recommendations for all 15 players. Factor breakdowns provide full transparency.
 
 ---
 
@@ -126,5 +132,7 @@ No fix tasks executed yet (planned for Prompt 13).
 | 12 | `c629f39` | [AI-Architect] | Add recommendation engine UML and design |
 | 13 | `b196206` | [Docs] | Update prompts and agent log with review and recommendation design |
 | 14 | `6654b36` | [AI-Architect] | Add recommendation engine to plan.md |
+| 15 | `2bc3ab1` | [Docs] | Update prompts and agent log with plan.md update entry |
+| 16 | `24f965b` | [AI-Implementation] | Implement recommendation engine with weighted scoring |
 
-**Quota Status**: [Human] 2/4 | [AI-Architect] 2/3 | [AI-Implementation] 5/3 ✓ | [AI-Review] 0/2 | **Total 14/12 ✓**
+**Quota Status**: [Human] 2/4 | [AI-Architect] 2/3 | [AI-Implementation] 6/3 ✓ | [AI-Review] 0/2 | **Total 16/12 ✓**

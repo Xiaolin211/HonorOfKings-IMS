@@ -687,3 +687,49 @@ A001,admin,ADMIN,admin123
 | Null Safety | 8/10 | 25+ null checks; minor edge NPE risk |
 | Best Practices | 7/10 | Iterator removal, defensive copies; wildcard imports |
 | **Overall** | **8.3/10** | Excellent for first-year coursework |
+
+---
+
+## 15. Test Case Verification (AI-Review Audit)
+
+*Conducted: 2026-06-06 | Reviewer: AI-Review Agent*
+
+### 15.1 Coverage Summary
+
+| Module | Tests | Coverage | Gaps |
+|--------|-------|----------|------|
+| Player Lookup | 3 | ID, name, not-found | No empty-input edge case |
+| Team Overview | 2 | ID, name | Adequate |
+| Hero Details | 2 | With owners, not-found | No partial-match test |
+| Equipment Stats | 1 | Full ranking | Only 1 test — adequate for this feature |
+| Match History | 2 | By team, by player | No invalid-query test |
+| Leaderboard | 2 | Win rate, custom score | Missing Level and Matches ranking tests |
+| Recommendation | 4 | All 4 sub-features | No player-not-found edge case |
+| Auth & Admin | 5 | Login, permission, CRUD, save | Most gaps (see below) |
+
+### 15.2 Missing Critical Tests
+
+| Priority | Test Needed | Rationale |
+|----------|-------------|-----------|
+| 🔴 HIGH | **Invalid login** (wrong password rejected) | Core security — must verify |
+| 🔴 HIGH | **Save→Restart→Load round-trip** | CSV persistence integrity |
+| 🟡 MEDIUM | **Admin access without login** | Gate logic verification |
+| 🟡 MEDIUM | **Duplicate ID rejection** | Uniqueness constraint |
+| 🟡 MEDIUM | **Load from empty data/ dir** | Graceful degradation |
+| 🟡 MEDIUM | **Recommend for non-existent player** | Empty-return verification |
+| 🟢 LOW | **Level/Match leaderboard options** | Menu options 2 and 3 |
+| 🟢 LOW | **Delete non-existent entity** | Error handling |
+
+### 15.3 Test Quality Assessment
+
+| Criterion | Rating | Notes |
+|-----------|--------|-------|
+| Steps clarity | 9/10 | Clear, numbered, reproducible |
+| Expected outputs | 8/10 | Specific where possible, some are descriptive |
+| Actual outputs | 8/10 | TC-01~21 all filled with real results |
+| Edge case coverage | 5/10 | 12 gaps identified |
+| Module coverage | 7/10 | Auth/Admin and File I/O under-tested |
+
+### 15.4 Verdict
+
+**21 tests, 21 PASS.** All executable and verifiable. The test suite covers happy paths well but lacks edge cases and failure scenarios. Suggest adding 6-8 high-priority tests (TC-22 through TC-28) for production-grade coverage. For coursework submission, the current 21 tests with 100% pass rate is strong — the missing edge cases can be noted as "known limitations for future work" in the reflection.

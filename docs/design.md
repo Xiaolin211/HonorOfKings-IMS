@@ -636,3 +636,171 @@ Or if using a single command:
 ```bash
 javac -d out $(find src -name "*.java") && java -cp out hok.Main
 ```
+
+---
+
+## 13. Recommendation Engine Design
+
+### 13.1 Overview
+
+The Recommendation Engine provides personalized hero and equipment suggestions based on multiple weighted factors. It analyzes existing game data (players, heroes, equipment, team compositions) to produce ranked, explainable recommendations.
+
+**New files:**
+- `src/hok/enums/RecommendationType.java`
+- `src/hok/model/RecommendationResult.java`
+- `src/hok/service/RecommendationEngine.java`
+
+### 13.2 RecommendationType Enum
+
+```java
+package hok.enums;
+
+public enum RecommendationType {
+    HERO,       // Recommending a hero
+    EQUIPMENT   // Recommending equipment
+}
+```
+
+### 13.3 RecommendationResult (DTO)
+
+| | |
+|---|---|
+| **Package** | `hok.model` |
+| **Type** | concrete class (Data Transfer Object) |
+
+| Field | Type | Access | Description |
+|-------|------|--------|-------------|
+| recommendedId | String | private | ID of the recommended item (hero ID or equipment ID) |
+| recommendedName | String | private | Display name |
+| type | RecommendationType | private | HERO or EQUIPMENT |
+| confidence | double | private | Score 0.0–1.0, higher = stronger recommendation |
+| reason | String | private | Human-readable explanation |
+| supportingStats | Map\<String, Double\> | private | Raw factor scores for transparency |
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| RecommendationResult(id, name, type, confidence, reason, stats) | — | Constructor |
+| getRecommendedId() | String | |
+| getRecommendedName() | String | |
+| getType() | RecommendationType | |
+| getConfidence() | double | |
+| getReason() | String | |
+| getSupportingStats() | Map\<String, Double\> | |
+| toString() | String | Formatted: "Name (Confidence: X%) — Reason" |
+
+### 13.4 RecommendationEngine
+
+| | |
+|---|---|
+| **Package** | `hok.service` |
+| **Dependency** | GameDataManager (read-only) |
+
+**Fields:**
+- `dm: GameDataManager` — read-only data source
+
+**Public Methods:**
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| RecommendationEngine(dm) | — | Constructor |
+| recommendHeroesForPlayer(playerId, count) | List\<RecommendationResult\> | Top-N hero recommendations for a specific player |
+| recommendEquipmentForPlayer(playerId, count) | List\<RecommendationResult\> | Top-N equipment recommendations for a player |
+| recommendHeroByType(heroType, count) | List\<RecommendationResult\> | Top-N heroes of a specific type (general, not player-specific) |
+| recommendEquipmentByHeroType(heroType, count) | List\<RecommendationResult\> | Top-N equipment compatible with a given hero type |
+
+**Private Methods:**
+
+| Method | Return | Description |
+|--------|--------|-------------|
+| computeHeroScore(hero, player) | double | Weighted score for hero recommendation |
+| computeEquipmentScore(eq, player) | double | Weighted score for equipment recommendation |
+| generateHeroReason(hero, score, stats) | String | Human-readable reason for hero rec |
+| generateEquipmentReason(eq, score, stats) | String | Human-readable reason for equipment rec |
+| normalize(value, min, max) | double | Min-max normalization to 0.0–1.0 |
+
+### 13.5 Recommendation Algorithm — Hero
+
+**Formula:**
+
+```
+heroScore = typeMatch      * 0.30
+          + winRateFactor  * 0.25
+          + popularity     * 0.20
+          + teamSynergy    * 0.15
+          + levelMatch     * 0.10
+```
+
+**Factor Definitions:**
+
+| Factor | Weight | Computation | Rationale |
+|--------|--------|-------------|-----------|
+| **typeMatch** | 0.30 | 1.0 if the hero's type is NOT already well-represented in the player's hero pool; 0.5 if partially covered; 0.0 if fully covered | Encourages type diversity |
+| **winRateFactor** | 0.25 | Average win rate of all players who own this hero, normalized to 0.0–1.0 | Favors strong-performing heroes |
+| **popularity** | 0.20 | `countOfPlayersOwningHero / totalPlayers`, normalized | Favors commonly-used heroes |
+| **teamSynergy** | 0.15 | 1.0 if the hero's type complements the player's team composition; lower if redundant | Favors team balance across HeroTypes |
+| **levelMatch** | 0.10 | `1.0 - abs(playerLevel - avgOwnerLevel) / 30.0` | Avoids recommending heroes too far above/below the player's experience level |
+
+**Tie-breaking:** confidence descending → hero name ascending
+
+### 13.6 Recommendation Algorithm — Equipment
+
+**Formula:**
+
+```
+equipmentScore = heroCompatibility * 0.30
+               + usageFactor        * 0.25
+               + ratingFactor       * 0.25
+               + typeSynergy        * 0.20
+```
+
+**Factor Definitions:**
+
+| Factor | Weight | Computation | Rationale |
+|--------|--------|-------------|-----------|
+| **heroCompatibility** | 0.30 | `countOfPlayerHeroesCompatibleWithThisEquipment / countOfPlayerHeroes` | How many of the player's heroes can use this equipment |
+| **usageFactor** | 0.25 | `equipment.usageCount / maxUsageCount`, normalized | Favors popular, battle-tested equipment |
+| **ratingFactor** | 0.25 | `equipment.rating / 10.0`, normalized | Favors highly-rated equipment |
+| **typeSynergy** | 0.20 | 1.0 if the equipment type matches the dominant HeroType in the player's hero pool; 0.5 for neutral; 0.0 for poor match | E.g., ATTACK equipment for a player with mostly MARKSMAN heroes |
+
+**Tie-breaking:** confidence descending → equipment name ascending
+
+### 13.7 Reason Generation
+
+Each recommendation includes a human-readable reason string. Examples:
+
+- **Hero:** "Diao Chan (Confidence: 78%) — Adds MAGE diversity to your team (TANK-heavy). Strong win rate (65%) among owners. Recommended for level 22 players."
+- **Equipment:** "Infinity Blade (Confidence: 85%) — Compatible with 3 of your 4 heroes. High usage (120 uses) and rating (9.5/10). Matches your ATTACK-focused hero pool."
+
+### 13.8 Integration
+
+**GameDataManager additions (no changes needed):**
+- The engine uses existing `getAllPlayers()`, `getAllHeroes()`, `getAllEquipment()`, `findPlayersOwningHero()` — all already implemented.
+
+**Main.java menu update:**
+```
+COMMON MENU (both roles):
+  ...
+  4.5  Recommendation Engine  ← NEW
+       ├── 1. Recommend Heroes for Me
+       ├── 2. Recommend Equipment for Me
+       ├── 3. Recommend Heroes by Type
+       └── 4. Recommend Equipment by Hero Type
+  ...
+```
+
+**Call flow:**
+1. Main.java → `recommendationEngine.recommendHeroesForPlayer(currentUserId, 5)`
+2. Engine reads all players/heroes/equipment from GameDataManager
+3. Scores each candidate hero (excluding already-owned)
+4. Sorts by confidence descending, returns top-N
+5. Main.java displays formatted results with reasons
+
+### 13.9 Constraints
+
+| Rule | Detail |
+|------|--------|
+| No self-recommendation | Never recommend a hero the player already owns |
+| Read-only | Engine never modifies GameDataManager state |
+| Graceful degradation | If player not found, return empty list (no crash) |
+| Transparent | Every recommendation includes factor breakdown in supportingStats |
+| Explainable | Every recommendation includes a plain-English reason string |

@@ -299,3 +299,120 @@
 | `1` | Exactly one | Team 1 — Player 1..* |
 | `0..*` | Zero or many | Hero 0..* — Equipment 0..* |
 | `1..*` | One or many | Team 1..* — Player |
+
+---
+
+## 8. Recommendation Engine — New Classes
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                          <<enum>>                                                   │
+│                      RecommendationType                                             │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  HERO                                                                               │
+│  EQUIPMENT                                                                          │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                              RecommendationResult                                   │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  - recommendedId: String                                                            │
+│  - recommendedName: String                                                          │
+│  - type: RecommendationType                                                         │
+│  - confidence: double                                                               │
+│  - reason: String                                                                   │
+│  - supportingStats: Map<String, Double>                                             │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  + RecommendationResult(recId, recName, type, confidence, reason, stats)            │
+│  + getRecommendedId(): String                                                       │
+│  + getRecommendedName(): String                                                     │
+│  + getType(): RecommendationType                                                    │
+│  + getConfidence(): double                                                          │
+│  + getReason(): String                                                              │
+│  + getSupportingStats(): Map<String, Double>                                        │
+│  + toString(): String                                                               │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                            RecommendationEngine                                     │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  - dm: GameDataManager                                                              │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│  + RecommendationEngine(dm: GameDataManager)                                        │
+│  + recommendHeroesForPlayer(playerId: String, count: int): List<RecommendationResult│
+│  + recommendEquipmentForPlayer(playerId: String, count: int): List<RecommendationRe.│
+│  + recommendHeroByType(heroType: HeroType, count: int): List<RecommendationResult>  │
+│  + recommendEquipmentByHeroType(heroType: HeroType, count: int): List<Recommendatio.│
+│  - computeHeroScore(hero: Hero, player: Player): double                             │
+│  - computeEquipmentScore(eq: Equipment, player: Player): double                     │
+│  - generateHeroReason(hero: Hero, score: double, stats: Map): String                │
+│  - generateEquipmentReason(eq: Equipment, score: double, stats: Map): String        │
+│  - normalize(value: double, min: double, max: double): double                       │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 9. Recommendation Engine Dependency Diagram
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                             Main.java                                │
+│  handleRecommendation() → RecommendationEngine                       │
+└───┬──────────────────────────────────────────────────────────────────┘
+    │
+    ▽
+┌──────────────────────────────────────────────────────────────────────┐
+│                      RecommendationEngine                            │
+│  Uses: GameDataManager (read-only)                                   │
+│  Produces: List<RecommendationResult>                                │
+└───┬──────────────────────────────────────────────────────────────────┘
+    │
+    │ reads
+    ▽
+┌──────────────────────────────────────────────────────────────────────┐
+│                      GameDataManager                                 │
+│  getAllPlayers(), getAllHeroes(), getAllEquipment()                  │
+│  findPlayersOwningHero(), findHeroByName()                           │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 10. Recommendation Flow (Sequence Diagram)
+
+```
+  User          Main.java        RecEngine       GameDataManager
+   │                │                │                │
+   │ Recommend Hero │                │                │
+   │───────────────>│                │                │
+   │                │ recommendHero  │                │
+   │                │───────────────>│                │
+   │                │                │ getAllPlayers()│
+   │                │                │───────────────>│
+   │                │                │   players      │
+   │                │                │<───────────────│
+   │                │                │                │
+   │                │                │ getAllHeroes() │
+   │                │                │───────────────>│
+   │                │                │   heroes       │
+   │                │                │<───────────────│
+   │                │                │                │
+   │                │                │ [for each hero │
+   │                │                │  not owned]:   │
+   │                │                │ computeScore() │
+   │                │                │ generateReason │
+   │                │                │────┐           │
+   │                │                │    │ sort by   │
+   │                │                │    │ score desc│
+   │                │                │<───┘           │
+   │                │                │                │
+   │                │  top N results │                │
+   │                │<───────────────│                │
+   │                │                │                │
+   │  formatted     │                │                │
+   │  recommendations                │                │
+   │<───────────────│                │                │
+```

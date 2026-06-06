@@ -28,7 +28,7 @@ This document records AI agent contributions grouped by role, with corresponding
 
 ## 2. Implementation Agent
 
-**Total contributions**: 5
+**Total contributions**: 6
 
 ### Contribution 1: Core Model Layer & Initial Dataset (Prompt 03 + Prompt 04)
 
@@ -59,6 +59,12 @@ This document records AI agent contributions grouped by role, with corresponding
 - **Main contribution**: Created `src/hok/service/RankingService.java` (10 methods). Equipment ranking: weighted formula (usageCount*0.4 + rating*0.4 + compatibleHeroCount*0.2). Player leaderboards: top-N by win rate, level, matches, and custom score, all with consistent tie-breaking (level→name). Generic table formatter with dynamic columns. Main.java leaderboard menu supports all 4 ranking types.
 - **Related commits**: `9257ef5` [AI-Implementation]
 - **Human decision**: CHECKED AND VERIFIED. Ranking formulas and tie-breaking are correct. Ready for AuthenticationService.
+
+### Contribution 6: Authentication + Admin + FileStorage (Prompts 09-11)
+
+- **Main contribution**: Completed the service layer with 3 services and wired everything into Main.java. AuthenticationService: login/logout with polymorphic Person reference, role-based access control. AdminService: interactive CRUD menus for all 5 entity types with cascade safety. FileStorageService: full CSV save/load with graceful error handling (FileNotFoundException, NumberFormatException), semicolon sub-separators for multi-valued fields. All 6 CSV files verified on disk. Full smoke test passed: Player Lookup, Team Overview, Hero Details, Equipment Ranking, Leaderboard, Login, Admin Management, Save/Load all confirmed working.
+- **Related commits**: `fb61331` [AI-Implementation]
+- **Human decision**: CHECKED AND VERIFIED. All core functions compile and run. The system is feature-complete per coursework requirements. Authentication polymorphism works correctly. Admin CRUD cascade behavior is proper. File I/O handles all edge cases. Ready for review phase.
 
 ---
 
@@ -98,5 +104,7 @@ No fix tasks executed yet (planned for Prompt 13).
 | 6 | `5ee1b66` | [Docs] | Update prompts and agent log with Prompt 05 entry |
 | 7 | `cb03eb4` | [AI-Implementation] | Add InputHelper and Main menu skeleton with stubs |
 | 8 | `9257ef5` | [AI-Implementation] | Add SearchService RankingService and wire into Main menu |
+| 9 | `6ea84f2` | [Docs] | Update prompts and agent log for Prompts 06-08 |
+| 10 | `fb61331` | [AI-Implementation] | Add Authentication Admin and FileStorage services |
 
-**Quota Status**: [Human] 2/4 | [AI-Architect] 0/3 | [AI-Implementation] 4/3 ✓ | [AI-Review] 0/2 | **Total 8/12**
+**Quota Status**: [Human] 2/4 | [AI-Architect] 0/3 | [AI-Implementation] 5/3 ✓ | [AI-Review] 0/2 | **Total 10/12**

@@ -238,3 +238,87 @@ Main.java updated with full leaderboard menu: user selects ranking type (1-4) an
 ### My Decision
 
 **CHECKED AND VERIFIED.** The weighted equipment formula is reasonable for this domain. Tie-breaking is consistently implemented across all four leaderboard types. The generic formatLeaderboard method with boolean flags avoids code duplication. Custom score normalization (dividing by 30 and 300) keeps all three components in comparable ranges. Ready to proceed to AuthenticationService.
+
+---
+
+## Prompt 09 — Implementation Agent: Authentication
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Implementation |
+| **Related Commit** | `fb61331` |
+
+### AI Response Summary
+
+Created `src/hok/service/AuthenticationService.java` (~80 lines, 7 methods):
+
+- `login(id, password)`: Searches admins first, then players. Returns true on match. Sets `currentUser` to the matched Person (polymorphism — can be Admin or Player).
+- `logout()`: Sets currentUser to null.
+- `isLoggedIn()`, `isAdmin()`: State checks. `isAdmin()` uses `getRole() == Role.ADMIN` — demonstrates runtime type checking via polymorphism.
+- `canEditPlayer(playerId)`: Admins can edit anyone; Players can only edit themselves.
+- `canManageData()`: Admin-only gate.
+
+Default test accounts verified: admin/admin123 (Admin), p001/p001123 (Player).
+
+Main.java login menu: shows login status at top of main menu when logged in. Option 10 toggles between login/logout. Admin Management (option 7) checks auth before allowing access.
+
+### My Decision
+
+**CHECKED AND VERIFIED.** The polymorphism design is clean — `currentUser` is typed as `Person` but behaves differently based on actual runtime type (Admin vs Player). Login searches admins first (efficient — only 1 admin vs 15 players). Password comparison is simple string equality which is acceptable for a coursework console app. Ready for Admin data management.
+
+---
+
+## Prompt 10 — Implementation Agent: Admin data management
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Implementation |
+| **Related Commit** | `fb61331` |
+
+### AI Response Summary
+
+Created `src/hok/service/AdminService.java` (~260 lines) with interactive console CRUD for all 5 entity types:
+
+- **Manage Players**: List/Add/Edit/Delete. Add prompts for ID, name, level, win rate, matches. Edit prompts with current value shown in brackets. Delete cascades (removes from team).
+- **Manage Heroes**: List/Add/Delete. Add prompts for ID, name, type (1-6 numeric choice mapped to HeroType enum), HP, attack, defense, speed. Delete cascades (removes from all players).
+- **Manage Equipment**: List/Add/Edit/Delete. Add prompts for all fields. Edit supports rating changes. Delete cascades (removes from all heroes).
+- **Manage Teams**: List/Add/Add Player/Remove Player/Delete. Moving a player between teams is supported (asks confirmation). Delete cascades (clears all members' team).
+- **Manage Match Records**: List/Add/Delete. Add prompts for teamA/teamB with existence checks, result (1-3 → MatchResult), date, match type.
+
+All ID checks prevent duplicates. All delete operations confirm before executing. Input validated via InputHelper. Main.java gates access behind `authService.isAdmin()`.
+
+### My Decision
+
+**CHECKED AND VERIFIED.** The admin menu is self-contained with its own loop — returns to Main when user selects "Back". Enum values are selected by numeric choice, making it user-friendly. Cascade behavior is properly communicated to the user (e.g., "Hero deleted (removed from all players)"). Player movement between teams handles the bidirectional reference correctly. Ready for File I/O.
+
+---
+
+## Prompt 11 — Implementation Agent: File persistence
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Implementation |
+| **Related Commit** | `fb61331` |
+
+### AI Response Summary
+
+Created `src/hok/storage/FileStorageService.java` (~280 lines) with full CSV persistence:
+
+- **Save**: 6 entity-specific save methods + `saveAll()` wrapper. Creates `data/` directory if missing. Formats: players.csv (id,name,role,level,winRate,totalMatches,heroIds,password), admins.csv, heroes.csv, equipment.csv, teams.csv (id,name,playerIds), matchrecords.csv (id,teamAId,teamBId,result,matchDate,matchType). Multi-valued fields (heroIds, playerIds, compatibleEquipmentIds) use semicolons as sub-separators.
+- **Load**: 6 entity-specific load methods + `loadAll()` returns a `LoadedData` container. All load methods handle `FileNotFoundException` gracefully — return empty lists, log a message, program continues. `NumberFormatException` also caught for corrupt data.
+- **Relationship restoration**: Teams are loaded after players (to restore Player references via ID matching). Match records are loaded after teams (to restore Team references). Heroes' compatible equipment IDs are stored but cross-referencing is deferred.
+- **Error handling**: Every I/O operation wrapped in try-catch. Missing files → skip with message. Corrupt lines → skip that line. Never crashes.
+
+Main.java: Save (option 8) calls `fileService.saveAll()` and reports success/failure. Load (option 9) asks confirmation before replacing data.
+
+Verified: All 6 CSV files created in `data/` directory during smoke test. File sizes: admins.csv 75B, equipment.csv 971B, heroes.csv 948B, matchrecords.csv 402B, players.csv 900B, teams.csv 153B.
+
+### My Decision
+
+**CHECKED AND VERIFIED.** Exception handling is comprehensive — the program never crashes on missing or corrupt files. The LoadedData inner class is a clean way to return all parsed data as a single object. Semicolon sub-separators correctly handle multi-valued fields without conflicting with CSV commas. Relationship restoration order (players → teams → matches) respects the dependency chain. File sizes are reasonable for the dataset size. Ready for review phase.

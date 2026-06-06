@@ -16,6 +16,7 @@ This project implements an AI-Assisted Information Management System for "Honor 
 - **Leaderboard**: Display top X players by win rate, level, matches, or custom score
 - **Data Management**: Admin can create, read, update, and delete all data; players have restricted access
 - **Authentication**: Simple login/logout system distinguishing Admin and Player roles
+- **AI-Assisted Recommendation Engine:** Implement an intelligent recommendation system that suggests optimal heroes and equipment builds based on multi-dimensional analysis, including hero type, player ownership/preferences, win rate statistics, equipment usage frequency, and team composition synergy. The engine must provide explainable recommendations with clear reasoning.
 
 ### 1.3 Target Users
 - **Admin**: Full access for data management and system configuration
@@ -55,6 +56,16 @@ This project implements an AI-Assisted Information Management System for "Honor 
 - CSV file persistence for data storage
 - Compilable with JDK 8+ standard library only
 
+#### Recommendation Engine Requirements
+- **FR-REC-01:** System shall recommend heroes based on team composition synergy, player-owned heroes, and global/player win rates.
+- **FR-REC-02:** System shall recommend equipment builds based on hero-specific usage statistics, win rate correlation, and player inventory.
+- **FR-REC-03:** Each recommendation must include a human-readable explanation detailing the contributing factors and their relative weights.
+- **FR-REC-04:** Recommendation functionality must be accessible via a dedicated sub-menu from the Main Menu.
+- **FR-REC-05:** Algorithm must support multiple interchangeable strategies (Strategy Pattern) to allow future algorithm evolution without core refactoring.
+- **FR-REC-06:** Recommendations must respect data constraints: only recommend heroes/equipment the player owns (configurable soft/hard filter).
+- **NFR-REC-01:** Recommendation response time must be under 500ms for a pool of 100+ heroes.
+- **NFR-REC-02:** Scoring formula weights must be externally configurable without code changes.
+
 ---
 
 ## 3. Java Concepts Used
@@ -72,6 +83,12 @@ This project implements an AI-Assisted Information Management System for "Honor 
 | **Exception Handling** | try-catch in File I/O; custom exceptions for data integrity violations |
 | **File I/O** | CSV read/write operations in FileStorageService |
 | **Enums** | Role, HeroType, EquipmentType, MatchResult |
+| **Strategy Design Pattern** | Encapsulates interchangeable recommendation algorithms (`HeroRecommendationStrategy`, `EquipmentRecommendationStrategy`) behind a common interface, enabling runtime algorithm switching and Open/Closed Principle compliance |
+| **Java Streams & Collectors** | Used extensively for filtering candidate pools, mapping entities to scored results, and aggregating statistics (e.g., `stream().filter().map().sorted().limit()` pipeline) |
+| **Custom Comparator / Sorting** | Multi-factor weighted scoring with custom `Comparator<RecommendationResult>` for ranking results by composite score |
+| **Generics** (`RecommendationResult<T>`) | Type-safe recommendation container supporting both `Hero` and `Equipment` return types from a unified interface |
+| **EnumMap** | Efficient storage and lookup of recommendation factor weights using `EnumMap<RecommendationFactor, Double>` |
+| **Functional Interfaces** | Lambda expressions for pluggable normalization functions (sigmoid, min-max) within the scoring formula |
 
 ---
 
@@ -106,6 +123,18 @@ This project implements an AI-Assisted Information Management System for "Honor 
 |-------|------------------|
 | **DataInitializer** | Creates initial test dataset |
 | **InputHelper** | Safe console input handling and validation |
+
+#### Recommendation Engine Classes
+| Class | Package | Responsibility |
+| :--- | :--- | :--- |
+| `RecommendationEngine` | `src/hok/service/recommendation/` | Facade class; manages strategy registry and delegates execution |
+| `RecommendationStrategy` | `src/hok/service/recommendation/` | Interface defining `execute(RecommendationRequest)` contract |
+| `HeroRecommendationStrategy` | `src/hok/service/recommendation/impl/` | Weighted scoring for hero picks (synergy + mastery + win rate) |
+| `EquipmentRecommendationStrategy` | `src/hok/service/recommendation/impl/` | Weighted scoring for equipment builds (usage + win rate + inventory) |
+| `RecommendationResult<T>` | `src/hok/model/recommendation/` | Generic result DTO: item, score, reason string, factor breakdown map |
+| `RecommendationRequest` | `src/hok/model/recommendation/` | Input DTO: player context, team composition, target role, top-N |
+| `RecommendationFactor` | `src/hok/model/recommendation/` | Enum: WIN_RATE, PLAYER_MASTERY, TEAM_SYNERGY, EQUIP_POPULARITY, OWNERSHIP |
+| `RecommendationMenu` | `src/hok/ui/` | Sub-menu UI implementing `IMenu` interface for recommendation entry points |
 
 ---
 
@@ -395,6 +424,12 @@ A001,admin,ADMIN,admin123
 | **Stage 7** | 2 days | Implement ranking and leaderboard functions | [AI-Implementation] |
 | **Stage 8** | 2 days | Testing/Review Agent bug detection, fixes, final testing | [AI-Review] |
 | **Stage 9** | 1 day | Complete documentation, reflection, Git export | [Human] |
+| **REC-1: Foundation** | Days 1–2 | `RecommendationResult`, `RecommendationRequest`, `RecommendationFactor` enum, `RecommendationStrategy` interface | Model layer stable |
+| **REC-2: Hero Strategy** | Days 3–5 | `HeroRecommendationStrategy`, synergy matrix data structure, weighted scoring formula implementation | GameDataManager hero API |
+| **REC-3: Equipment Strategy** | Days 6–7 | `EquipmentRecommendationStrategy`, usage statistics aggregation | GameDataManager equipment API |
+| **REC-4: Engine & Config** | Day 8 | `RecommendationEngine` facade, external weight configuration loading, caching layer | REC-2, REC-3 complete |
+| **REC-5: UI Integration** | Days 9–10 | `RecommendationMenu`, Main Menu integration, display formatting with explanations | REC-4 complete |
+| **REC-6: Testing & Tuning** | Days 11–12 | Unit tests, integration tests, weight tuning with sample data | All above |
 
 ### 9.2 Milestones
 
@@ -440,6 +475,21 @@ A001,admin,ADMIN,admin123
 3. **System Testing**: Test complete workflows end-to-end
 4. **Edge Case Testing**: Test boundary conditions and invalid inputs
 5. **Manual Testing**: Console interaction and usability testing
+6. **Recommendation Engine Testing**: Verify scoring formulas, strategy switching, explanation generation, config loading
+
+#### Recommendation Engine Tests
+| Test ID | Type | Description | Expected Result |
+| :--- | :--- | :--- | :--- |
+| TEST-REC-01 | Unit | Hero scoring formula produces normalized scores in [0.0, 1.0] | All factor contributions sum correctly; no score exceeds bounds |
+| TEST-REC-02 | Unit | Owned-hero filter excludes unowned heroes when hard-filter enabled | Returned list contains only player-owned heroes |
+| TEST-REC-03 | Unit | Team synergy score reflects known synergy pairs | Donghuang Taiyi + Luban yields higher synergy than two unrelated heroes |
+| TEST-REC-04 | Unit | Equipment strategy ranks high-usage items above low-usage items | Top result matches highest usage-frequency equipment for given hero |
+| TEST-REC-05 | Unit | Explanation string is non-null and references at least one factor | Every `RecommendationResult.reason` contains meaningful text |
+| TEST-REC-06 | Integration | Full hero recommendation pipeline from request to sorted results | Returns top-N results in descending score order within 500ms |
+| TEST-REC-07 | Integration | Menu navigation: Main Menu → Recommendation Menu → Back | Navigation flow completes without exceptions or state corruption |
+| TEST-REC-08 | Edge Case | Empty team composition defaults to personal preference weighting | No NullPointerException; fallback weights applied gracefully |
+| TEST-REC-09 | Edge Case | Player with zero match history receives global-stat-only recommendations | Mastery factor contributes 0; other factors compensate normally |
+| TEST-REC-10 | Config | Weight modification via config file takes effect without recompilation | Updated weights reflected in next recommendation call |
 
 ---
 

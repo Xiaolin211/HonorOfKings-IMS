@@ -10,7 +10,7 @@ This document records AI agent contributions grouped by role, with corresponding
 
 ## 1. Architect Agent
 
-**Total contributions**: 2
+**Total contributions**: 3
 
 ### Contribution 1: Project Structure Review & Plan Analysis (Prompt 01)
 
@@ -22,7 +22,13 @@ This document records AI agent contributions grouped by role, with corresponding
 
 - **Main contribution**: Created `docs/design.md` (12 chapters: layered architecture, package structure, enum/interface specs, 7 model class field/method tables, 5 service specs, CSV format, security, compilation). Created `docs/uml.md` (7 diagrams: full class diagram with relationship arrows, interface/enum diagrams, service dependencies, authentication sequence, save/load sequence, legend). Established plan.md/design.md/uml.md division of labor.
 - **Related commits**: `73ce68a` [Human]
-- **Human decision**: ACCEPTED WITH MODIFICATIONS. Three corrections required before implementation: (1) Unified getTopPlayer() → getStrongestPlayer() naming in code. (2) Changed MatchRecord.matchDate from String to LocalDate, added getMatchDateString() helper. (3) Verified UML diagrams match design.md method signatures. Corrected in code during Prompt 03.
+- **Human decision**: ACCEPTED WITH MODIFICATIONS. Three corrections required before implementation: (1) Unified getTopPlayer() → getStrongestPlayer() naming in code. (2) Changed MatchRecord.matchDate from String to LocalDate, added getMatchDateString() helper. (3) Verified UML diagrams match design.md method signatures.
+
+### Contribution 3: Recommendation Engine Architecture (Prompt 12a)
+
+- **Main contribution**: Designed complete Recommendation Engine extension: 3 new classes (RecommendationType enum, RecommendationResult DTO, RecommendationEngine service), 2 weighted multi-factor algorithms (hero: 5 factors at 0.30/0.25/0.20/0.15/0.10 weights; equipment: 4 factors at 0.30/0.25/0.25/0.20), UML diagrams (class diagram, dependency diagram, sequence diagram), design specs with field/method tables, reason generation examples, integration plan for Main.java menu. All factors tied to observable game data with documented rationales.
+- **Related commits**: `c629f39` [AI-Architect]
+- **Human decision**: ACCEPTED. The weighted formula design is transparent and defensible. DTO pattern cleanly separates computation from presentation. Read-only dependency on GameDataManager ensures zero risk to existing data integrity. Ready for implementation. Corrected in code during Prompt 03.
 
 ---
 
@@ -70,9 +76,13 @@ This document records AI agent contributions grouped by role, with corresponding
 
 ## 3. Testing-Reviewer Agent
 
-**Total contributions**: 0
+**Total contributions**: 1
 
-No review tasks executed yet (planned for Prompt 12).
+### Contribution 1: Full Requirement Audit (Prompt 12)
+
+- **Main contribution**: Performed comprehensive code audit against all coursework requirements. 17 checks passed (7 required classes, 10 OOP concepts, dataset minimums, compilation, runtime). Found 2 bugs: B1 (HIGH) — handleLoadData() discards loaded CSV data; B2 (MEDIUM) — CSV load does not restore relationships. Documented 2 inconsistencies (getTopPlayer/getStrongestPlayer, String/LocalDate matchDate). Provided 14 manual test cases.
+- **Related commits**: `c629f39` [AI-Architect] (review report included in design docs commit)
+- **Human decision**: REVIEWED AND ACCEPTED. Bugs confirmed, recommendation engine feature added before fixes.
 
 ---
 
@@ -106,5 +116,7 @@ No fix tasks executed yet (planned for Prompt 13).
 | 8 | `9257ef5` | [AI-Implementation] | Add SearchService RankingService and wire into Main menu |
 | 9 | `6ea84f2` | [Docs] | Update prompts and agent log for Prompts 06-08 |
 | 10 | `fb61331` | [AI-Implementation] | Add Authentication Admin and FileStorage services |
+| 11 | `40b0651` | [Docs] | Update prompts and agent log for Prompts 09-11 |
+| 12 | `c629f39` | [AI-Architect] | Add recommendation engine UML and design |
 
-**Quota Status**: [Human] 2/4 | [AI-Architect] 0/3 | [AI-Implementation] 5/3 ✓ | [AI-Review] 0/2 | **Total 10/12**
+**Quota Status**: [Human] 2/4 | [AI-Architect] 1/3 | [AI-Implementation] 5/3 ✓ | [AI-Review] 0/2 | **Total 12/12 ✓**

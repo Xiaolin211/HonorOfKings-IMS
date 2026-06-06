@@ -322,3 +322,64 @@ Verified: All 6 CSV files created in `data/` directory during smoke test. File s
 ### My Decision
 
 **CHECKED AND VERIFIED.** Exception handling is comprehensive — the program never crashes on missing or corrupt files. The LoadedData inner class is a clean way to return all parsed data as a single object. Semicolon sub-separators correctly handle multi-valued fields without conflicting with CSV commas. Relationship restoration order (players → teams → matches) respects the dependency chain. File sizes are reasonable for the dataset size. Ready for review phase.
+
+---
+
+## Prompt 12 — Testing/Reviewer Agent: Requirement review
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Review |
+| **Related Commit** | `c629f39` |
+
+### AI Response Summary
+
+Performed a comprehensive code audit against all coursework requirements. Reviewed all 17 Java source files.
+
+**17 checks passed**: 7 required classes present, 10 OOP concepts demonstrated (inheritance, interface, polymorphism, encapsulation, aggregation, composition, association, collections, exception handling, file I/O, enums), dataset minimums verified, program compiles and runs.
+
+**2 bugs found**: B1 (HIGH) — `handleLoadData()` in Main.java calls `dataManager.initializeData()` instead of loading CSV data, making the Load feature non-functional. B2 (MEDIUM) — CSV load does not restore Player↔Hero and Hero↔Equipment relationships.
+
+**2 documentation-code inconsistencies**: R1 — `getTopPlayer()` in code vs `getStrongestPlayer()` in design docs (per Prompt 02 decision). R2 — `String matchDate` in code vs `LocalDate` in design docs.
+
+**14 manual test cases** provided covering all menu options. Final verdict: 14/16 checks pass, 2 minimal fixes needed (~30 lines total).
+
+### My Decision
+
+**REVIEWED AND ACCEPTED.** The 2 bugs are real and must be fixed before final submission. The documentation inconsistencies are cosmetic for a first-year project — I chose to keep `matchDate` as `String` for simplicity. Method name `getTopPlayer()` is acceptable and does not affect functionality. However, I am adding a major new feature: a Recommendation Engine. The review confirms the existing architecture is clean enough to accommodate this extension without refactoring.
+
+---
+
+## Prompt 12a — Architect Agent: Recommendation Engine Design
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Architect |
+| **Related Commit** | `c629f39` |
+
+### AI Response Summary
+
+Designed a complete Recommendation Engine as a new architectural extension. Produced full design documentation with algorithm formulas, UML diagrams, and integration plan.
+
+**New classes designed (3):**
+- `RecommendationType` enum (HERO, EQUIPMENT)
+- `RecommendationResult` DTO — holds recommendedId, recommendedName, type, confidence (0.0-1.0), reason (human-readable explanation), supportingStats (factor breakdown for transparency)
+- `RecommendationEngine` service — depends on GameDataManager (read-only), exposes 4 public methods: recommendHeroesForPlayer, recommendEquipmentForPlayer, recommendHeroByType, recommendEquipmentByHeroType. 5 private methods for scoring and normalization.
+
+**Hero recommendation algorithm:** 5-factor weighted formula: typeMatch(0.30) + winRateFactor(0.25) + popularity(0.20) + teamSynergy(0.15) + levelMatch(0.10). Factors encourage hero-type diversity, favor strong-performing heroes, consider team balance, and match player experience level.
+
+**Equipment recommendation algorithm:** 4-factor weighted formula: heroCompatibility(0.30) + usageFactor(0.25) + ratingFactor(0.25) + typeSynergy(0.20). Factors measure how many of the player's heroes can use the equipment, usage popularity, quality rating, and synergy with the player's hero pool.
+
+**Design principles:** No self-recommendation (never suggest already-owned heroes), read-only (engine never mutates data), graceful degradation (empty list on invalid input), transparent (every recommendation includes factor breakdown), explainable (plain-English reason string per recommendation).
+
+**UML updates:** Added Sections 8-10 to uml.md — new class diagram for 3 classes with full field/method signatures, dependency diagram showing Engine→GameDataManager relationship, sequence diagram for the recommendation flow (User→Main→Engine→GameDataManager).
+
+**Design updates:** Added Section 13 to design.md — complete specifications for all 3 new classes, algorithm formulas with factor definitions and weight rationales, reason generation examples, Main.java menu integration plan (sub-menu with 4 options), constraint table.
+
+### My Decision
+
+**ACCEPTED.** The weighted formula design is transparent and defensible — every factor has a clear rationale tied to observable game data. The DTO pattern (RecommendationResult) cleanly separates computation from presentation. The read-only dependency on GameDataManager means zero risk to existing data integrity. The explainable reason generation satisfies the coursework requirement for AI-assisted recommendations that a first-year student can explain. Ready for implementation.

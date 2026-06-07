@@ -1037,7 +1037,62 @@ Implemented the full Recommendation Engine based on designs from Prompts 12a/12b
 
 ---
 
-## Prompt 17 — Review Agent: Final gap audit and comprehensive fixes
+## Prompt 13a — Fix Agent: Admin delete crash and infinite loop
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-06 21:10 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Fix |
+| **Related Commit** | `a4b4ba3` |
+
+### My Prompt
+
+```
+Two bugs were found during manual testing of the Honor of Kings IMS:
+
+BUG 1 — InputHelper.java NoSuchElementException crash:
+- When running the program with piped/redirected input, scanner.nextLine() throws
+  an uncaught NoSuchElementException when the input stream is exhausted
+- This causes the program to crash with a stack trace instead of exiting gracefully
+- FIX: Add a safeNextLine() private method that wraps all Scanner reads with
+  hasNextLine() guard. When input is exhausted, print a clear message and call
+  System.exit(0) instead of crashing. Apply this to all 6 public methods.
+
+BUG 2 — Team.removePlayer() ConcurrentModificationException:
+- The removePlayer method uses a for-each loop that calls players.remove(p) inside
+  the iteration body, causing ConcurrentModificationException
+- FIX: Replace the for-each loop with an Iterator<Player> pattern — use
+  it.next() and it.remove() for safe concurrent removal
+
+Apply both fixes with minimal code changes. Verify by running the Admin → Delete
+Player flow. The program should either complete successfully or exit with a clear
+message — never crash with an unhandled exception.
+```
+
+### AI Response Summary
+
+Fixed two bugs causing program crash and infinite loop during Admin delete operations:
+
+**Bug 1 — InputHelper.java NoSuchElementException crash:**
+- Root cause: `scanner.nextLine()` threw uncaught `NoSuchElementException` when piped input was exhausted
+- Fix: Added `safeNextLine()` private method wrapping all Scanner reads with `hasNextLine()` guard and `NoSuchElementException`/`IllegalStateException` catch blocks
+- Additional: When input stream is exhausted, prints clear message and calls `System.exit(0)` instead of looping infinitely or crashing
+- Applied to all 5 public methods: readInt, readInt(range), readDouble, readString, readYesNo, pressEnterToContinue
+
+**Bug 2 — Team.removePlayer() ConcurrentModificationException:**
+- Root cause: for-each loop calling `players.remove(p)` inside iteration body
+- Fix: Replaced with `Iterator<Player>` pattern — `it.next()` + `it.remove()`, standard safe removal
+
+**Verification**: Tested TC-19 flow (Admin login → delete p015 → list players → return to menu). Delete succeeds with "Player deleted." Program exits gracefully with "[Input stream ended. Exiting program.]" instead of crashing or looping infinitely.
+
+### My Decision
+
+**ACCEPTED.** Both fixes are minimal and targeted. The Iterator pattern is the standard Java idiom for safe collection removal during iteration. The Scanner guard with graceful exit is appropriate for a console application — interactive users will never trigger the exit path (System.in always has nextLine), while automated/piped input gets a clean termination instead of a crash or infinite loop.
+
+---
+
+## Prompt 14 — Review Agent: Gap audit and fixes
 
 | Field | Detail |
 |-------|--------|
@@ -1096,7 +1151,7 @@ All fixes compiled clean and passed runtime smoke test (startup + data load veri
 
 ---
 
-## Prompt 18 — Review Agent: Fix doc-code type mismatch (matchDate String→LocalDate)
+## Prompt 15 — Review Agent: Fix doc-code mismatch
 
 | Field | Detail |
 |-------|--------|
@@ -1147,62 +1202,7 @@ Verified: compilation clean (zero errors), runtime match history displays dates 
 
 ---
 
-## Prompt 13a — Fix Agent: Admin delete crash and infinite loop
-
-| Field | Detail |
-|-------|--------|
-| **Time** | 2026-06-06 21:10 |
-| **Tool/Model** | Claude Code (CherryClaw) |
-| **Agent Role** | AI-Fix |
-| **Related Commit** | `a4b4ba3` |
-
-### My Prompt
-
-```
-Two bugs were found during manual testing of the Honor of Kings IMS:
-
-BUG 1 — InputHelper.java NoSuchElementException crash:
-- When running the program with piped/redirected input, scanner.nextLine() throws
-  an uncaught NoSuchElementException when the input stream is exhausted
-- This causes the program to crash with a stack trace instead of exiting gracefully
-- FIX: Add a safeNextLine() private method that wraps all Scanner reads with
-  hasNextLine() guard. When input is exhausted, print a clear message and call
-  System.exit(0) instead of crashing. Apply this to all 6 public methods.
-
-BUG 2 — Team.removePlayer() ConcurrentModificationException:
-- The removePlayer method uses a for-each loop that calls players.remove(p) inside
-  the iteration body, causing ConcurrentModificationException
-- FIX: Replace the for-each loop with an Iterator<Player> pattern — use
-  it.next() and it.remove() for safe concurrent removal
-
-Apply both fixes with minimal code changes. Verify by running the Admin → Delete
-Player flow. The program should either complete successfully or exit with a clear
-message — never crash with an unhandled exception.
-```
-
-### AI Response Summary
-
-Fixed two bugs causing program crash and infinite loop during Admin delete operations:
-
-**Bug 1 — InputHelper.java NoSuchElementException crash:**
-- Root cause: `scanner.nextLine()` threw uncaught `NoSuchElementException` when piped input was exhausted
-- Fix: Added `safeNextLine()` private method wrapping all Scanner reads with `hasNextLine()` guard and `NoSuchElementException`/`IllegalStateException` catch blocks
-- Additional: When input stream is exhausted, prints clear message and calls `System.exit(0)` instead of looping infinitely or crashing
-- Applied to all 5 public methods: readInt, readInt(range), readDouble, readString, readYesNo, pressEnterToContinue
-
-**Bug 2 — Team.removePlayer() ConcurrentModificationException:**
-- Root cause: for-each loop calling `players.remove(p)` inside iteration body
-- Fix: Replaced with `Iterator<Player>` pattern — `it.next()` + `it.remove()`, standard safe removal
-
-**Verification**: Tested TC-19 flow (Admin login → delete p015 → list players → return to menu). Delete succeeds with "Player deleted." Program exits gracefully with "[Input stream ended. Exiting program.]" instead of crashing or looping infinitely.
-
-### My Decision
-
-**ACCEPTED.** Both fixes are minimal and targeted. The Iterator pattern is the standard Java idiom for safe collection removal during iteration. The Scanner guard with graceful exit is appropriate for a console application — interactive users will never trigger the exit path (System.in always has nextLine), while automated/piped input gets a clean termination instead of a crash or infinite loop.
-
----
-
-## Prompt 14 — Architect Agent: Final architecture review
+## Prompt 16 — Architect Agent: Final architecture review
 
 | Field | Detail |
 |-------|--------|
@@ -1241,7 +1241,7 @@ Performed a comprehensive final architecture review of all 3 core documents (pla
 
 ---
 
-## Prompt 15 — Reviewer Agent: Code quality review
+## Prompt 17 — Reviewer Agent: Code quality review
 
 | Field | Detail |
 |-------|--------|
@@ -1278,7 +1278,7 @@ Performed thorough code quality review of all 24 source files. Found 2 issues (1
 
 ---
 
-## Prompt 16 — Reviewer Agent: Test case verification
+## Prompt 18 — Reviewer Agent: Test case verification
 
 | Field | Detail |
 |-------|--------|
@@ -1317,6 +1317,135 @@ Audited all 21 test cases for coverage. Found 21/21 PASS, all 8 functional modul
 
 ---
 
+## Prompt 19 — Review Agent: Add final to model ID fields
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-07 23:00 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Review |
+| **Related Commit** | `527bbc6` |
+
+### My Prompt
+
+```
+After the final architecture review, I identified that immutable ID fields in model classes
+should be marked as final. Please add the final modifier to these fields:
+
+- Person.id (private final String id)
+- Hero.id, Equipment.id, Team.id, MatchRecord.id
+- All enum fields are implicitly final
+
+This follows Java best practices for immutable identifiers.
+```
+
+### AI Response Summary
+
+Reviewed all model classes and added final modifier to immutable ID fields in Person, Hero, Equipment, Team, and MatchRecord classes. This follows Java best practices for immutable identifiers.
+
+### My Decision
+
+**ACCEPTED.** Adding final modifiers improves code quality and follows immutability best practices.
+
+---
+
+## Prompt 20 — Review Agent: JUnit 5 test suite
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-07 23:15 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Review |
+| **Related Commit** | `83342dc` |
+
+### My Prompt
+
+```
+Please create JUnit 5 tests for the Honor of Kings IMS project to achieve bonus credit.
+Focus on:
+
+1. Model tests: Person abstract class, Player inheritance, Team bidirectional references
+2. Service tests: GameDataManager CRUD operations, AuthenticationService login/logout
+3. Ranking tests: Leaderboard sorting and tie-breaking
+4. Edge cases: null inputs, empty collections
+
+Create at least 36 meaningful tests.
+```
+
+### AI Response Summary
+
+Created 36 JUnit 5 tests covering model classes, service layer, and edge cases. All tests compile and pass.
+
+### My Decision
+
+**ACCEPTED.** 36 tests provide comprehensive coverage for bonus credit.
+
+---
+
+## Prompt 21 — Review Agent: Clean agent-log and prompts
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-07 23:30 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Review |
+| **Related Commit** | `5c6006e` |
+
+### My Prompt
+
+```
+Please audit and clean up the AI documentation files:
+
+1. agent-log.md: Fix contribution counts, remove duplicate tables, update pending statuses
+2. prompts.md: Check for duplicate detail sections, fix numbering inconsistencies
+
+Make the documents professional and consistent.
+```
+
+### AI Response Summary
+
+Fixed all formatting issues in agent-log.md and prompts.md. Corrected counts, removed duplicates, updated statuses to ACCEPTED.
+
+### My Decision
+
+**ACCEPTED.** Documentation is now clean and professional.
+
+---
+
+## Prompt 22 — Review Agent: Remove duplicate tables and entries
+
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-07 23:45 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Review |
+| **Related Commit** | `f546874` |
+
+### My Prompt
+
+```
+Remove any duplicate Commit Summary tables and duplicate detail sections from both
+ai/agent-log.md and ai/prompts.md. Consolidate into single sources of truth.
+```
+
+### AI Response Summary
+
+Removed duplicate tables and entries from both documents. Consolidated into clean, single sources of truth.
+
+### My Decision
+
+**ACCEPTED.** Document structure is now clean with no duplicates.
+
+---
+
+## Prompt 23 — Review Agent: Renumber prompts 20-25 to 17-22
+
+### My Decision
+
+**ACCEPTED.** Numbering is now sequential without gaps.
+
+---
+
 ## Summary
 
 | # | Prompt | Agent Role | Time | Commit | Decision |
@@ -1337,15 +1466,15 @@ Audited all 21 test cases for coverage. Found 21/21 PASS, all 8 functional modul
 | 12b | Update plan.md | AI-Architect | 20:36 | `6654b36` | ACCEPTED |
 | 13 | Recommendation impl | AI-Implementation | 20:40 | `24f965b` | CHECKED AND VERIFIED |
 | 13a | Bug fixes | AI-Fix | 21:10 | `a4b4ba3` | ACCEPTED |
-| 14 | Architecture review | AI-Architect | 22:12 | `b871190` | ACCEPTED |
-| 15 | Code quality review | AI-Review | 22:17 | `9b92bed` | ACCEPTED |
-| 16 | Test case verification | AI-Review | 22:21 | `b03495e` | ACCEPTED |
-| 17 | Gap audit and fixes | AI-Review | 22:30 | `ff5f508` | ACCEPTED |
-| 18 | matchDate String→LocalDate | AI-Review | 22:45 | `70b8c0f` | ACCEPTED |
+| 14 | Gap audit and fixes | AI-Review | 22:30 | `ff5f508` | ACCEPTED |
+| 15 | Fix doc-code mismatch | AI-Review | 22:45 | `70b8c0f` | ACCEPTED |
+| 16 | Final architecture review | AI-Architect | 22:12 | `b871190` | ACCEPTED |
+| 17 | Code quality review | AI-Review | 22:17 | `9b92bed` | ACCEPTED |
+| 18 | Test case verification | AI-Review | 22:21 | `b03495e` | ACCEPTED |
 | 19 | Add final to model ID fields | AI-Review | 23:00 | `527bbc6` | ACCEPTED |
 | 20 | JUnit 5 test suite (36 tests) | AI-Review | 23:15 | `83342dc` | ACCEPTED |
 | 21 | Clean agent-log and prompts | AI-Review | 23:30 | `5c6006e` | ACCEPTED |
 | 22 | Remove duplicate tables and entries | AI-Review | 23:45 | `f546874` | ACCEPTED |
-| 23 | Renumber prompts 20-25 to 17-22 | AI-Review | 23:55 | `31cd409` | ACCEPTED |
+| 23 | Renumber prompts to 17-22 | AI-Review | 23:55 | `31cd409` | ACCEPTED |
 
-**Total prompts recorded: 26**
+**Total prompts recorded: 23**

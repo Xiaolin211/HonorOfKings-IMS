@@ -9,7 +9,7 @@ import java.time.LocalDate;
  * The result is stored from teamA's perspective.
  */
 public class MatchRecord {
-    private String id;
+    private final String id;
     private Team teamA;
     private Team teamB;
     private MatchResult result;

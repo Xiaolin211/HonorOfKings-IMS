@@ -7,7 +7,7 @@ import hok.enums.EquipmentType;
  * Each equipment provides stat bonuses and has a rating.
  */
 public class Equipment {
-    private String id;
+    private final String id;
     private String name;
     private EquipmentType equipmentType;
     private int attackBonus;

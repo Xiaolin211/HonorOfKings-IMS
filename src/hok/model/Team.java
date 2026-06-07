@@ -10,7 +10,7 @@ import java.util.List;
  * can exist independently (survive team deletion).
  */
 public class Team implements Reportable {
-    private String id;
+    private final String id;
     private String name;
     private List<Player> players;
 

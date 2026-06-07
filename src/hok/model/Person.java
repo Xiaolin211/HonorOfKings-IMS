@@ -8,7 +8,7 @@ import hok.enums.Role;
  * Cannot be instantiated directly — demonstrates abstraction.
  */
 public abstract class Person {
-    private String id;
+    private final String id;
     private String name;
     private Role role;
 

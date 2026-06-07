@@ -11,7 +11,7 @@ import java.util.List;
  * Demonstrates association with Equipment and interface implementation.
  */
 public class Hero implements Reportable {
-    private String id;
+    private final String id;
     private String name;
     private HeroType heroType;
     private int hp;

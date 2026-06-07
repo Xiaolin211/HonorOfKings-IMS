@@ -209,4 +209,19 @@ No documentation finalization tasks executed yet (planned for Prompt 14).
 | 26 | `ff5f508` | [AI-Review] | Fix 11 gaps from requirement audit across docs and code |
 | 27 | `70b8c0f` | [AI-Review] | Refactor MatchRecord.matchDate from String to LocalDate |
 
-**Quota Status**: [Human] 5/4 ✓ | [AI-Architect] 3/3 ✓ | [AI-Implementation] 6/3 ✓ | [AI-Review] 4/2 ✓ | **Total 30/12 ✓**
+### Contribution 5: Immutability Audit — add final to ID fields
+
+- **Main contribution**: Identified that all 5 model classes (Person, Hero, Equipment, Team, MatchRecord) have `private String id` fields that are set exclusively in constructors and never reassigned — but none were declared `final`. This misses a fundamental Java best practice: immutable fields should be explicitly marked final to prevent accidental mutation and communicate design intent to code reviewers. Directed the fix: changed all 5 `private String id` declarations to `private final String id`. No compilation errors — confirmed no setter methods existed for any of these ID fields, validating that the `final` modifier was always the correct choice.
+- **Related commits**: `527bbc6` [AI-Review]
+- **Human decision**: [PENDING — review fix and approve]
+
+---
+
+## Commit Summary
+
+| # | Hash | Prefix | Description |
+|---|------|--------|-------------|
+| 27 | `70b8c0f` | [AI-Review] | Refactor MatchRecord.matchDate from String to LocalDate |
+| 28 | `527bbc6` | [AI-Review] | Add final modifier to immutable ID fields in all model classes |
+
+**Quota Status**: [Human] 5/4 ✓ | [AI-Architect] 3/3 ✓ | [AI-Implementation] 6/3 ✓ | [AI-Review] 5/2 ✓ | **Total 32/12 ✓**

@@ -146,40 +146,6 @@ This document records AI agent contributions grouped by role, with corresponding
 
 ---
 
-## Commit Summary
-
-| # | Hash | Prefix | Description |
-|---|------|--------|-------------|
-| 1 | `7e9c867` | [Human] | Create project plan with requirements and class design |
-| 2 | `73ce68a` | [Human] | Approve design document and UML class diagrams |
-| 3 | `3a2e260` | [AI-Implementation] | Add core model classes enums interface and DataInitializer |
-| 4 | `0642fb0` | [Docs] | Update prompts log and agent log for Prompts 01-04 |
-| 5 | `eb5bbdb` | [AI-Implementation] | Add GameDataManager with CRUD and HashMap indexes |
-| 6 | `5ee1b66` | [Docs] | Update prompts and agent log with Prompt 05 entry |
-| 7 | `cb03eb4` | [AI-Implementation] | Add InputHelper and Main menu skeleton with stubs |
-| 8 | `9257ef5` | [AI-Implementation] | Add SearchService RankingService and wire into Main menu |
-| 9 | `6ea84f2` | [Docs] | Update prompts and agent log for Prompts 06-08 |
-| 10 | `fb61331` | [AI-Implementation] | Add Authentication Admin and FileStorage services |
-| 11 | `40b0651` | [Docs] | Update prompts and agent log for Prompts 09-11 |
-| 12 | `c629f39` | [AI-Architect] | Add recommendation engine UML and design |
-| 13 | `b196206` | [Docs] | Update prompts and agent log with review and recommendation design |
-| 14 | `6654b36` | [AI-Architect] | Add recommendation engine to plan.md |
-| 15 | `2bc3ab1` | [Docs] | Update prompts and agent log with plan.md update entry |
-| 16 | `24f965b` | [AI-Implementation] | Implement recommendation engine with weighted scoring |
-| 17 | `baf6ca0` | [Docs] | Update prompts and agent log with recommendation engine implementation |
-| 18 | `a4b4ba3` | [Fix] | Prevent crash and infinite loop in admin delete operations |
-| 19 | `947dbee` | [Docs] | Update prompts and agent log with fix entry |
-| 20 | `5b41159` | [Human] | Create test cases with results from manual testing |
-| 21 | `e5e731c` | [Human] | Populate test case results for TC-01 through TC-21 |
-| 22 | `70b20f8` | [Human] | Complete reflection document with self-assessment |
-| 23 | `b871190` | [AI-Architect] | Final architecture review and optimization suggestions |
-| 24 | `9b92bed` | [AI-Review] | Code quality review and optimization suggestions |
-| 25 | `b03495e` | [AI-Review] | Test case verification and edge case analysis |
-| 26 | `ff5f508` | [AI-Review] | Fix 11 gaps from requirement audit across docs and code |
-| 27 | `70b8c0f` | [AI-Review] | Refactor MatchRecord.matchDate from String to LocalDate |
-| 28 | `527bbc6` | [AI-Review] | Add final modifier to immutable ID fields in all model classes |
-| 29 | `83342dc` | [AI-Review] | Add JUnit 5 unit tests covering OOP concepts and cascade safety |
-
 ### Contribution 7: Documentation Cleanup — fix counts, merge tables, add missing prompts (Prompt 24)
 
 - **Main contribution**: Verified both tracking documents against each other and found 6 issues: (1) agent-log Testing-Reviewer count showed "2" but listed 6 contributions — corrected to 6; (2) Architect count showed "4" but had 5 contributions — corrected to 5; (3) Commit Summary table was duplicated 5 times across the file — merged into a single unified table; (4) Documentation Agent section still said "planned for Prompt 14" — removed legacy text; (5) prompts.md entries 14/15/16 had no "My Prompt" raw text sections — added complete prompt text for all three; (6) Summary table numbering was inconsistent with document headers — renumbered to match (12a/12b/13/13a/14/15/16/20-23). Rewrote agent-log.md to clean state with all 6 issues resolved.

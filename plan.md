@@ -517,27 +517,28 @@ A001,admin,ADMIN,admin123
 
 ---
 
-## 12. Final Reflection Placeholder
+## 12. Final Reflection
 
-*This section will be completed after project implementation.*
+The complete final reflection is documented in `ai/reflection.md`, which answers all 10 required questions from Section 6.4 of the coursework specification. Key highlights:
 
-### 12.1 Learning Outcomes
+### 12.1 Project Completion Summary
 
-- What Java concepts did I master through this project?
-- How did AI assist in my learning process?
-- What challenges did I overcome independently?
+- **Source files**: 24 Java files across 7 packages (model, service, enums, interfacepkg, storage, util, root)
+- **Lines of code**: 3,630
+- **Test coverage**: 24 manual test cases + 36 JUnit 5 unit tests (100% pass rate)
+- **Git commits**: 41 total, exceeding all minimum quotas
+- **AI agents used**: Architect (5 contributions), Implementation (7), Testing-Reviewer (8), Fix (1)
 
-### 12.2 AI Usage Reflection
+### 12.2 Requirements Fulfillment
 
-- How did AI help me complete this project?
-- What did AI do poorly?
-- How did I verify AI outputs?
+All requirements from the coursework specification have been met:
+- 7 required classes with abstract Person, inheritance, and interfaces
+- 10 OOP concepts demonstrated in compilable, reviewed code
+- All 8 functional requirements implemented (5.1 through 5.8)
+- AI evidence: 25 prompt records, 5 agent roles documented, 10 reflection questions answered
+- Extra credit: Recommendation Engine with weighted multi-factor scoring and JUnit test suite
 
-### 12.3 Project Evaluation
-
-- What worked well in my design?
-- What would I change if I started over?
-- What additional features could be added?
+See `ai/reflection.md` for the full self-assessment, including: which parts were AI-generated vs human-written, which prompts were most useful, which AI suggestions were rejected, bugs found and fixed, Java concepts mastered, and lessons learned for future AI-assisted projects.
 
 ---
 

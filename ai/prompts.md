@@ -1037,7 +1037,7 @@ Implemented the full Recommendation Engine based on designs from Prompts 12a/12b
 
 ---
 
-## Prompt 20 — Review Agent: Final gap audit and comprehensive fixes
+## Prompt 17 — Review Agent: Final gap audit and comprehensive fixes
 
 | Field | Detail |
 |-------|--------|
@@ -1096,7 +1096,7 @@ All fixes compiled clean and passed runtime smoke test (startup + data load veri
 
 ---
 
-## Prompt 21 — Review Agent: Fix doc-code type mismatch (matchDate String→LocalDate)
+## Prompt 18 — Review Agent: Fix doc-code type mismatch (matchDate String→LocalDate)
 
 | Field | Detail |
 |-------|--------|
@@ -1340,11 +1340,11 @@ Audited all 21 test cases for coverage. Found 21/21 PASS, all 8 functional modul
 | 14 | Architecture review | AI-Architect | 22:12 | `b871190` | ACCEPTED |
 | 15 | Code quality review | AI-Review | 22:17 | `9b92bed` | ACCEPTED |
 | 16 | Test case verification | AI-Review | 22:21 | `b03495e` | ACCEPTED |
-| 20 | Gap audit and fixes | AI-Review | 22:30 | `ff5f508` | ACCEPTED |
-| 21 | matchDate String→LocalDate | AI-Review | 22:45 | `70b8c0f` | ACCEPTED |
-| 22 | Add final to model ID fields | AI-Review | 23:00 | `527bbc6` | ACCEPTED |
-| 23 | JUnit 5 test suite (36 tests) | AI-Review | 23:15 | `83342dc` | ACCEPTED |
-| 24 | Clean agent-log and prompts | AI-Review | 23:30 | `5c6006e` | ACCEPTED |
-| 25 | Remove duplicate tables and entries | AI-Review | 23:45 | `f546874` | ACCEPTED |
+| 17 | Gap audit and fixes | AI-Review | 22:30 | `ff5f508` | ACCEPTED |
+| 18 | matchDate String→LocalDate | AI-Review | 22:45 | `70b8c0f` | ACCEPTED |
+| 19 | Add final to model ID fields | AI-Review | 23:00 | `527bbc6` | ACCEPTED |
+| 20 | JUnit 5 test suite (36 tests) | AI-Review | 23:15 | `83342dc` | ACCEPTED |
+| 21 | Clean agent-log and prompts | AI-Review | 23:30 | `5c6006e` | ACCEPTED |
+| 22 | Remove duplicate tables and entries | AI-Review | 23:45 | `f546874` | ACCEPTED |
 
-**Total prompts recorded: 25**
+**Total prompts recorded: 22**

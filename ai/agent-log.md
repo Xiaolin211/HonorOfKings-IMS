@@ -114,19 +114,19 @@ This document records AI agent contributions grouped by role, with corresponding
 - **Related commits**: `b03495e` [AI-Review]
 - **Human decision**: REVIEWED AND ACCEPTED. The 100% pass rate on tests provides strong evidence of functional correctness. Missing edge cases documented as known limitations.
 
-### Contribution 4: Gap Audit and Comprehensive Fixes (Prompt 20)
+### Contribution 4: Gap Audit and Comprehensive Fixes (Prompt 17)
 
 - **Main contribution**: Performed comprehensive gap audit against all 18 sections of the coursework requirements. Identified and directed fixes for 11 gaps: (1) README.md was empty — wrote full 8-section README; (2) reflection.md missing answers to 5/10 required questions — rewrote complete document; (3) prompts.md missing raw prompt text in all entries — added "### My Prompt" sections with actual prompts; (4) MatchRecord lacked hero picks data — added heroPicksA/B fields and constructors; (5) Match History lacked hero pick rate and win/loss record — implemented full statistics with formatted display; (6) Player had no self-edit capability — added Account menu with profile editing; (7) Team Overview missing "Total Matches" — added display line; (8) git-history.txt used custom format — replaced with standard `git log --oneline` output; (9) agent-log.md quota counts incorrect — corrected all counts; (10) plan.md doc-code Strategy Pattern mismatch — updated descriptions; (11) test-cases.md only 21 tests — added TC-22/23/24 for new features. All fixes compiled and runtime-verified.
 - **Related commits**: `ff5f508` [AI-Review]
 - **Human decision**: REVIEWED AND ACCEPTED. All 11 gaps closed. Project now meets every requirement in the coursework specification.
 
-### Contribution 5: Type Safety Fix — matchDate String→LocalDate (Prompt 21)
+### Contribution 5: Type Safety Fix — matchDate String→LocalDate (Prompt 18)
 
 - **Main contribution**: Identified documentation-code inconsistency: design.md and uml.md specify `MatchRecord.matchDate` as `LocalDate`, but code used `String`. Directed fix across 4 files: MatchRecord.java (field type + getMatchDateString() helper), DataInitializer.java (10 records to LocalDate.of()), FileStorageService.java (getMatchDateString() / LocalDate.parse()), AdminService.java (parse user input).
 - **Related commits**: `70b8c0f` [AI-Review]
 - **Human decision**: REVIEWED AND ACCEPTED. Code now matches design. Using java.time API demonstrates modern Java practice.
 
-### Contribution 6: Immutability Audit + final + JUnit Suite (Prompts 22 + 23)
+### Contribution 6: Immutability Audit + final + JUnit Suite (Prompts 19 + 20)
 
 - **Main contribution**: (a) Identified that all 5 model classes had `private String id` fields set exclusively in constructors — but none declared `final`. Changed all to `private final String id` — no compilation errors, confirming correctness. (b) Designed and implemented a JUnit 5 test suite: 36 tests across 5 classes (PersonTest, PlayerTest, TeamTest, GameDataManagerTest, RankingServiceTest) verifying all 10 OOP concepts plus cascade safety at the unit level. Created test/README.md with run instructions. Updated docs/test-cases.md, README.md, and reflection.md.
 - **Related commits**: `527bbc6` [AI-Review], `83342dc` [AI-Review]
@@ -146,9 +146,9 @@ This document records AI agent contributions grouped by role, with corresponding
 
 ---
 
-### Contribution 7: Documentation Cleanup — fix counts, merge tables, add missing prompts (Prompt 24)
+### Contribution 7: Documentation Cleanup — fix counts, merge tables, add missing prompts (Prompt 21)
 
-- **Main contribution**: Verified both tracking documents against each other and found 6 issues: (1) agent-log Testing-Reviewer count showed "2" but listed 6 contributions — corrected to 6; (2) Architect count showed "4" but had 5 contributions — corrected to 5; (3) Commit Summary table was duplicated 5 times across the file — merged into a single unified table; (4) Documentation Agent section still said "planned for Prompt 14" — removed legacy text; (5) prompts.md entries 14/15/16 had no "My Prompt" raw text sections — added complete prompt text for all three; (6) Summary table numbering was inconsistent with document headers — renumbered to match (12a/12b/13/13a/14/15/16/20-23). Rewrote agent-log.md to clean state with all 6 issues resolved.
+- **Main contribution**: Verified both tracking documents against each other and found 6 issues: (1) agent-log Testing-Reviewer count showed "2" but listed 6 contributions — corrected to 6; (2) Architect count showed "4" but had 5 contributions — corrected to 5; (3) Commit Summary table was duplicated 5 times across the file — merged into a single unified table; (4) Documentation Agent section still said "planned for Prompt 14" — removed legacy text; (5) prompts.md entries 14/15/16 had no "My Prompt" raw text sections — added complete prompt text for all three; (6) Summary table numbering was inconsistent with document headers — renumbered to match (12a/12b/13/13a/14/15/16/17-22). Rewrote agent-log.md to clean state with all 6 issues resolved.
 - **Related commits**: `5c6006e` [AI-Review]
 - **Human decision**: REVIEWED AND ACCEPTED. Documentation is now internally consistent with correct counts, no duplicates, and complete prompt entries.
 

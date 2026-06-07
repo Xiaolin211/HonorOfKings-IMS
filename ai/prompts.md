@@ -1211,6 +1211,26 @@ Fixed two bugs causing program crash and infinite loop during Admin delete opera
 | **Agent Role** | AI-Architect |
 | **Related Commit** | `b871190` |
 
+### My Prompt
+
+```
+Review the complete Honor of Kings IMS project architecture as a final audit
+before submission. Check the three core documents (plan.md, design.md, uml.md)
+and all source code for architectural integrity.
+
+Specifically:
+1. Count source files, lines of code, packages
+2. Identify architectural strengths (at least 5)
+3. Identify architectural issues with severity ratings (HIGH/MEDIUM/LOW)
+4. Verify all 12 OOP concepts with specific code evidence
+5. Assess package cohesion (which packages are well-organized, which are overloaded)
+6. Suggest optimizations (effort vs benefit)
+7. Provide a final verdict with ratings per dimension
+
+Focus on: layered architecture compliance, class responsibilities,
+coupling between packages, and adherence to the design documents.
+```
+
 ### AI Response Summary
 
 Performed a comprehensive final architecture review of all 3 core documents (plan.md, design.md, uml.md). Verified codebase statistics: 24 source files, 3,630 lines across 7 packages. Identified 10 architectural strengths (layered architecture, pure router Main.java, dual-storage pattern, defensive copies, bidirectional reference management, graceful I/O degradation, polymorphic auth, read-only recommender, explainable AI, package cohesion) and 7 issues (2 doc-code mismatches for Strategy Pattern and Singleton, GameDataManager size, CSV relationship restoration bug, no model-level validation, static Main.java fields, no caching in recommender). Produced OOP concept verification table confirming all 12 required concepts. Overall architecture rating: 8/10.
@@ -1230,6 +1250,24 @@ Performed a comprehensive final architecture review of all 3 core documents (pla
 | **Agent Role** | AI-Review |
 | **Related Commit** | `9b92bed` |
 
+### My Prompt
+
+```
+Review all 24 Java source files in the Honor of Kings IMS project for code quality.
+Check each file for:
+
+1. IMPORT HYGIENE: Any wildcard imports (import X.*)?
+2. ENCAPSULATION: Are all fields private? Are collection getters returning defensive copies?
+3. NULL SAFETY: Count null checks. Are there any unprotected dereferences?
+4. ERROR HANDLING: Are try-catch blocks present in all I/O operations?
+5. CODE STYLE: Naming conventions, @Override annotations, consistent formatting
+6. EFFICIENCY: Appropriate data structures? Any redundant computations?
+7. BEST PRACTICES: Iterator usage, immutability, string handling
+
+Produce a quality score table with 7 dimensions rated 1-10 each, plus an overall score.
+List each issue found with file name, line number, severity, and suggested fix.
+```
+
 ### AI Response Summary
 
 Performed thorough code quality review of all 24 source files. Found 2 issues (14 wildcard imports across 9 files, leaderboard % display misalignment confirmed by TC-11) and 3 minor suggestions (var inconsistency, manual string concatenation, unused findEquipmentByName). Verified all @Override annotations present, all 50+ fields private, 25+ null checks implemented. Quality scores: encapsulation 10/10, readability 9/10, code style 8/10, error handling 8/10, efficiency 8/10, null safety 8/10, best practices 7/10. Overall: 8.3/10.
@@ -1248,6 +1286,26 @@ Performed thorough code quality review of all 24 source files. Found 2 issues (1
 | **Tool/Model** | Claude Code (CherryClaw) |
 | **Agent Role** | AI-Review |
 | **Related Commit** | `b03495e` |
+
+### My Prompt
+
+```
+Audit all test cases in docs/test-cases.md against the coursework requirements.
+For each functional module, check:
+
+1. COVERAGE: How many tests per module? Any modules with zero tests?
+2. HAPPY PATH: Are all main menu options tested?
+3. EDGE CASES: What edge cases are missing?
+   - Invalid inputs (wrong password, empty strings, out-of-range numbers)
+   - Boundary conditions (empty data, max values)
+   - Error states (not found, permission denied, duplicate IDs)
+4. PERSISTENCE: Is save→restart→load round-trip tested?
+5. FORMAT: Does each test case include ID, function, input, expected output,
+   actual output, pass/fail, and bug found?
+
+Classify missing tests by priority (HIGH/MEDIUM/LOW).
+Provide an overall verdict with pass rate and coverage assessment.
+```
 
 ### AI Response Summary
 
@@ -1276,12 +1334,13 @@ Audited all 21 test cases for coverage. Found 21/21 PASS, all 8 functional modul
 | 11 | File persistence | AI-Implementation | 11:10 | `fb61331` | CHECKED AND VERIFIED |
 | 12 | Requirement review | AI-Review | 20:30 | `c629f39` | REVIEWED AND ACCEPTED |
 | 13 | Recommendation design | AI-Architect | 20:33 | `c629f39` | ACCEPTED |
-| 14 | Update plan.md | AI-Architect | 20:36 | `6654b36` | ACCEPTED |
-| 15 | Recommendation impl | AI-Implementation | 20:40 | `24f965b` | CHECKED AND VERIFIED |
-| 16 | Bug fixes | AI-Fix | 21:10 | `a4b4ba3` | ACCEPTED |
-| 17 | Architecture review | AI-Architect | 22:12 | `b871190` | ACCEPTED |
-| 18 | Code quality review | AI-Review | 22:17 | `9b92bed` | ACCEPTED |
-| 19 | Test case verification | AI-Review | 22:21 | `b03495e` | ACCEPTED |
+| 12a | Recommendation design | AI-Architect | 20:33 | `c629f39` | ACCEPTED |
+| 12b | Update plan.md | AI-Architect | 20:36 | `6654b36` | ACCEPTED |
+| 13 | Recommendation impl | AI-Implementation | 20:40 | `24f965b` | CHECKED AND VERIFIED |
+| 13a | Bug fixes | AI-Fix | 21:10 | `a4b4ba3` | ACCEPTED |
+| 14 | Architecture review | AI-Architect | 22:12 | `b871190` | ACCEPTED |
+| 15 | Code quality review | AI-Review | 22:17 | `9b92bed` | ACCEPTED |
+| 16 | Test case verification | AI-Review | 22:21 | `b03495e` | ACCEPTED |
 | 20 | Gap audit and fixes | AI-Review | 22:30 | `ff5f508` | ACCEPTED |
 | 21 | matchDate String→LocalDate | AI-Review | 22:45 | `70b8c0f` | ACCEPTED |
 | 22 | Add final to model ID fields | AI-Review | 23:00 | `527bbc6` | ACCEPTED |

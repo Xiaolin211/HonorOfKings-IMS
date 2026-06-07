@@ -1,3 +1,4 @@
+2c22db1 [Docs] Update agent log and prompts for JUnit 5 test suite
 83342dc [AI-Review] Add JUnit 5 unit tests covering OOP concepts and cascade safety
 1ca0322 [Docs] Add agent log and prompt entries for final modifier audit
 527bbc6 [AI-Review] Add final modifier to immutable ID fields in all model classes

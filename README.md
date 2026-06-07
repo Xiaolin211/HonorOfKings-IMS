@@ -118,6 +118,8 @@ This project was developed with AI assistance throughout all phases:
 
 **Test Coverage**: Player Lookup (3), Team Overview (3), Hero Details (2), Equipment Statistics (1), Match History (3), Leaderboard (2), Recommendation Engine (4), Authentication (2), Admin Management (2), Player Account (1), File I/O (1).
 
+**JUnit 5 Unit Tests**: 36 automated tests across 5 classes covering OOP concepts, cascade delete, tie-breaking, and more. See `test/README.md`.
+
 Full test documentation: `docs/test-cases.md`
 
 ---

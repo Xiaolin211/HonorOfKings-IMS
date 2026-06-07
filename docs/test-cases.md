@@ -409,5 +409,19 @@
 - **Passed**: 24 (100%)
 - **Failed**: 0 (0%)
 
+### JUnit 5 Unit Tests (Bonus)
+
+In addition to manual console tests, 36 JUnit 5 unit tests are provided in `test/` directory:
+
+| Test Class | Tests | Coverage |
+|-----------|-------|----------|
+| `PersonTest` | 5 | Abstract class, inheritance, encapsulation, polymorphism |
+| `PlayerTest` | 7 | Composition, defensive copies, Reportable interface |
+| `TeamTest` | 8 | Aggregation, bidirectional refs, computed statistics, empty team |
+| `GameDataManagerTest` | 8 | Cascade delete (4 types), dataset minimums, defensive copies, duplicate ID |
+| `RankingServiceTest` | 8 | Equipment formula, tie-breaking, custom score, formatting |
+
+See `test/README.md` for instructions on running JUnit tests.
+
 ### Issues Found
 1. **TC-11**: Minor display formatting issue with % sign placement in the leaderboard (non-critical).

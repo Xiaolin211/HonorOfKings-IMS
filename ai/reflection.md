@@ -247,7 +247,7 @@ If I started over, I would:
 | Feature Completeness | 8 | All required features implemented. MatchRecord could track per-match hero picks. |
 | Error Handling | 7 | I/O layer robust. Model layer could add more validation. |
 | Documentation | 8 | Comprehensive plan.md, design.md, UML. README could be more detailed. |
-| Testing | 8 | 21 manual test cases covering all major features at 100% pass rate. |
+| Testing | 9 | 24 manual test cases + 36 JUnit 5 unit tests. All pass at 100%. |
 
 ### Known Limitations
 

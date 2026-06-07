@@ -224,4 +224,19 @@ No documentation finalization tasks executed yet (planned for Prompt 14).
 | 27 | `70b8c0f` | [AI-Review] | Refactor MatchRecord.matchDate from String to LocalDate |
 | 28 | `527bbc6` | [AI-Review] | Add final modifier to immutable ID fields in all model classes |
 
-**Quota Status**: [Human] 5/4 ✓ | [AI-Architect] 3/3 ✓ | [AI-Implementation] 6/3 ✓ | [AI-Review] 5/2 ✓ | **Total 32/12 ✓**
+### Contribution 6: JUnit 5 Test Suite — OOP and cascade safety coverage
+
+- **Main contribution**: Designed and implemented a comprehensive JUnit 5 test suite that verifies all 10 required OOP concepts at the unit level, plus cascade delete safety — areas not easily testable via manual console tests. Created 36 tests across 5 classes: PersonTest (5 tests: abstract class declaration, inheritance field propagation, encapsulation, polymorphism via Person references), PlayerTest (7 tests: composition via addHero/removeHero, defensive copy immutability, Reportable interface contract, edge case for non-existent hero removal), TeamTest (8 tests: aggregation bidirectional reference setup and teardown, player survival after team removal, computed statistics accuracy, empty team safety defaults), GameDataManagerTest (8 tests: cascade delete verification for all 4 entity types, dataset minimum counts, defensive copies on getAll methods, null-safe lookup for missing IDs, duplicate ID rejection), RankingServiceTest (8 tests: equipment ranking sort order, tie-breaking chain verification, custom score formula, leaderboard count constraints, formatted string output). Also created test/README.md with JUnit 5 console launcher instructions. Updated docs/test-cases.md, README.md, and reflection.md to reference the unit tests.
+- **Related commits**: `83342dc` [AI-Review]
+- **Human decision**: [PENDING — review fix and approve]
+
+---
+
+## Commit Summary
+
+| # | Hash | Prefix | Description |
+|---|------|--------|-------------|
+| 28 | `527bbc6` | [AI-Review] | Add final modifier to immutable ID fields in all model classes |
+| 29 | `83342dc` | [AI-Review] | Add JUnit 5 unit tests covering OOP concepts and cascade safety |
+
+**Quota Status**: [Human] 5/4 ✓ | [AI-Architect] 3/3 ✓ | [AI-Implementation] 6/3 ✓ | [AI-Review] 6/2 ✓ | **Total 34/12 ✓**

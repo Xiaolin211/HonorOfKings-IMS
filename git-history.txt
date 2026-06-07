@@ -1,3 +1,5 @@
+83342dc [AI-Review] Add JUnit 5 unit tests covering OOP concepts and cascade safety
+1ca0322 [Docs] Add agent log and prompt entries for final modifier audit
 527bbc6 [AI-Review] Add final modifier to immutable ID fields in all model classes
 df943ce [Docs] Add prompts and agent log entries for gap audit and LocalDate fix
 70b8c0f [AI-Review] Refactor MatchRecord.matchDate from String to LocalDate

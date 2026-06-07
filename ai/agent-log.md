@@ -193,4 +193,20 @@ No documentation finalization tasks executed yet (planned for Prompt 14).
 | 25 | `b03495e` | [AI-Review] | Test case verification and edge case analysis |
 | 26 | `ff5f508` | [AI-Review] | Fix 11 gaps from requirement audit across docs and code |
 
-**Quota Status**: [Human] 5/4 ✓ | [AI-Architect] 3/3 ✓ | [AI-Implementation] 6/3 ✓ | [AI-Review] 3/2 ✓ | **Total 29/12 ✓**
+### Contribution 4: Type Safety Fix — matchDate String→LocalDate
+
+- **Main contribution**: Identified a documentation-code inconsistency: design.md and uml.md specify `MatchRecord.matchDate` as `LocalDate`, but the actual code implementation used `String`. This violated the design specifications created in Prompt 02. Directed the fix across 4 files: (1) MatchRecord.java — changed field type to `LocalDate`, added `getMatchDateString()` helper, updated both constructors; (2) DataInitializer.java — replaced 10 date strings with `LocalDate.of(2026, 5, d)` calls; (3) FileStorageService.java — CSV save uses `getMatchDateString()`, load uses `LocalDate.parse(parts[4])`; (4) AdminService.java — parses user input via `LocalDate.parse(dateStr)`. Verified compilation and runtime: all match history dates display correctly as "YYYY-MM-DD" format.
+- **Related commits**: `70b8c0f` [AI-Review]
+- **Human decision**: [PENDING — review fix and approve]
+
+---
+
+## Commit Summary
+
+| # | Hash | Prefix | Description |
+|---|------|--------|-------------|
+| ... | ... | ... | ... |
+| 26 | `ff5f508` | [AI-Review] | Fix 11 gaps from requirement audit across docs and code |
+| 27 | `70b8c0f` | [AI-Review] | Refactor MatchRecord.matchDate from String to LocalDate |
+
+**Quota Status**: [Human] 5/4 ✓ | [AI-Architect] 3/3 ✓ | [AI-Implementation] 6/3 ✓ | [AI-Review] 4/2 ✓ | **Total 30/12 ✓**

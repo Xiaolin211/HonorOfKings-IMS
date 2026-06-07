@@ -9,6 +9,7 @@ import hok.model.Hero;
 import hok.model.MatchRecord;
 import hok.model.Player;
 import hok.model.Team;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -302,16 +303,16 @@ public class DataInitializer {
         Team t2 = teams.get(1);
         Team t3 = teams.get(2);
 
-        records.add(new MatchRecord("m01", t1, t2, MatchResult.WIN,  "2026-05-01", "Ranked", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi"));
-        records.add(new MatchRecord("m02", t2, t3, MatchResult.WIN,  "2026-05-03", "Ranked", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao"));
-        records.add(new MatchRecord("m03", t1, t3, MatchResult.LOSE, "2026-05-05", "Ranked", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao"));
-        records.add(new MatchRecord("m04", t3, t1, MatchResult.WIN,  "2026-05-07", "Normal", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7"));
-        records.add(new MatchRecord("m05", t2, t1, MatchResult.LOSE, "2026-05-10", "Ranked", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7"));
-        records.add(new MatchRecord("m06", t3, t2, MatchResult.LOSE, "2026-05-12", "Normal", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi"));
-        records.add(new MatchRecord("m07", t1, t2, MatchResult.DRAW, "2026-05-15", "Ranked", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi"));
-        records.add(new MatchRecord("m08", t2, t3, MatchResult.LOSE, "2026-05-18", "Ranked", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao"));
-        records.add(new MatchRecord("m09", t1, t3, MatchResult.WIN,  "2026-05-22", "Normal", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao"));
-        records.add(new MatchRecord("m10", t3, t2, MatchResult.WIN,  "2026-05-28", "Ranked", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi"));
+        records.add(new MatchRecord("m01", t1, t2, MatchResult.WIN,  LocalDate.of(2026, 5, 1),  "Ranked", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi"));
+        records.add(new MatchRecord("m02", t2, t3, MatchResult.WIN,  LocalDate.of(2026, 5, 3),  "Ranked", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao"));
+        records.add(new MatchRecord("m03", t1, t3, MatchResult.LOSE, LocalDate.of(2026, 5, 5),  "Ranked", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao"));
+        records.add(new MatchRecord("m04", t3, t1, MatchResult.WIN,  LocalDate.of(2026, 5, 7),  "Normal", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7"));
+        records.add(new MatchRecord("m05", t2, t1, MatchResult.LOSE, LocalDate.of(2026, 5, 10), "Ranked", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7"));
+        records.add(new MatchRecord("m06", t3, t2, MatchResult.LOSE, LocalDate.of(2026, 5, 12), "Normal", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi"));
+        records.add(new MatchRecord("m07", t1, t2, MatchResult.DRAW, LocalDate.of(2026, 5, 15), "Ranked", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi"));
+        records.add(new MatchRecord("m08", t2, t3, MatchResult.LOSE, LocalDate.of(2026, 5, 18), "Ranked", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao"));
+        records.add(new MatchRecord("m09", t1, t3, MatchResult.WIN,  LocalDate.of(2026, 5, 22), "Normal", "Xiang Yu, Li Bai, A Ke, Diao Chan, Luban No.7", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao"));
+        records.add(new MatchRecord("m10", t3, t2, MatchResult.WIN,  LocalDate.of(2026, 5, 28), "Ranked", "Lian Po, Bai Qi, Han Xin, Cai Wenji, Da Qiao", "Hua Mulan, Lu Bu, Lanling Wang, Zhuge Liang, Hou Yi"));
 
         // Update player stats based on match records: increment totalMatches
         // Player stats are pre-set and won't change at this stage

@@ -9,6 +9,7 @@ import hok.model.Hero;
 import hok.model.MatchRecord;
 import hok.model.Player;
 import hok.model.Team;
+import java.time.LocalDate;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -319,7 +320,7 @@ public class FileStorageService {
                 String picksB = (m.getHeroPicksB() != null) ? m.getHeroPicksB() : "";
                 pw.println(m.getId() + SEPARATOR + m.getTeamA().getId()
                         + SEPARATOR + m.getTeamB().getId() + SEPARATOR + m.getResult()
-                        + SEPARATOR + m.getMatchDate() + SEPARATOR + m.getMatchType()
+                        + SEPARATOR + m.getMatchDateString() + SEPARATOR + m.getMatchType()
                         + SEPARATOR + picksA + SEPARATOR + picksB);
             }
             return true;
@@ -345,7 +346,7 @@ public class FileStorageService {
                 MatchResult result = MatchResult.valueOf(parts[3]);
                 String picksA = (parts.length > 6) ? parts[6] : "";
                 String picksB = (parts.length > 7) ? parts[7] : "";
-                MatchRecord m = new MatchRecord(parts[0], teamA, teamB, result, parts[4], parts[5], picksA, picksB);
+                MatchRecord m = new MatchRecord(parts[0], teamA, teamB, result, LocalDate.parse(parts[4]), parts[5], picksA, picksB);
                 records.add(m);
             }
         } catch (IOException e) {

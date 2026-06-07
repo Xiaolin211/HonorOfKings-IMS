@@ -9,6 +9,7 @@ import hok.model.MatchRecord;
 import hok.model.Player;
 import hok.model.Team;
 import hok.util.InputHelper;
+import java.time.LocalDate;
 
 /**
  * Admin-only data management operations.
@@ -301,7 +302,8 @@ public class AdminService {
                 System.out.println("Result (from Team A's perspective): 1-WIN 2-LOSE 3-DRAW");
                 int r = InputHelper.readInt("Result: ", 1, 3);
                 MatchResult result = MatchResult.values()[r - 1];
-                String date = InputHelper.readString("Date (YYYY-MM-DD): ");
+                String dateStr = InputHelper.readString("Date (YYYY-MM-DD): ");
+                LocalDate date = LocalDate.parse(dateStr);
                 String type = InputHelper.readString("Match type (e.g. Ranked): ");
                 MatchRecord mr = new MatchRecord(id, teamA, teamB, result, date, type);
                 if (dm.addMatchRecord(mr)) {

@@ -1,6 +1,7 @@
 package hok.model;
 
 import hok.enums.MatchResult;
+import java.time.LocalDate;
 
 /**
  * Represents a match record between two teams.
@@ -12,13 +13,13 @@ public class MatchRecord {
     private Team teamA;
     private Team teamB;
     private MatchResult result;
-    private String matchDate;
+    private LocalDate matchDate;
     private String matchType;
     private String heroPicksA;  // hero names used by teamA, e.g. "Li Bai, Luban No.7, Cai Wenji"
     private String heroPicksB;  // hero names used by teamB
 
     public MatchRecord(String id, Team teamA, Team teamB,
-                       MatchResult result, String matchDate, String matchType) {
+                       MatchResult result, LocalDate matchDate, String matchType) {
         this.id = id;
         this.teamA = teamA;
         this.teamB = teamB;
@@ -30,7 +31,7 @@ public class MatchRecord {
     }
 
     public MatchRecord(String id, Team teamA, Team teamB,
-                       MatchResult result, String matchDate, String matchType,
+                       MatchResult result, LocalDate matchDate, String matchType,
                        String heroPicksA, String heroPicksB) {
         this.id = id;
         this.teamA = teamA;
@@ -60,8 +61,15 @@ public class MatchRecord {
         return result;
     }
 
-    public String getMatchDate() {
+    public LocalDate getMatchDate() {
         return matchDate;
+    }
+
+    /**
+     * Returns match date in "YYYY-MM-DD" format for display and CSV serialization.
+     */
+    public String getMatchDateString() {
+        return matchDate.toString();
     }
 
     public String getMatchType() {

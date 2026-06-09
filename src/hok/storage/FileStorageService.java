@@ -82,7 +82,7 @@ public class FileStorageService {
 
     private boolean savePlayers(List<Player> players) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_DIR + "/players.csv"))) {
-            pw.println("id,name,role,level,winRate,totalMatches,heroIds,password");
+            pw.println("id,name,role,level,winRate,totalMatches,teamId,heroIds,password");
             for (Player p : players) {
                 StringBuilder heroIds = new StringBuilder();
                 for (Hero h : p.getHeroes()) {

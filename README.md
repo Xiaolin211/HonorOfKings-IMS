@@ -126,11 +126,8 @@ Full test documentation: `docs/test-cases.md`
 
 ## 8. Known Limitations
 
-1. **Match History hero picks**: The current `MatchRecord` model records teams and results but does not track per-player hero selections within each match.
-2. **Player self-edit**: Player users can view their own data but do not have a dedicated "Edit Profile" menu option in the current console interface.
-3. **CSV load relationship restoration**: After saving and reloading from CSV, Player↔Hero and Hero↔Equipment relationships are not fully re-wired (entities load as independent objects).
-4. **Leaderboard display**: Minor formatting issue with `%` sign placement in the win rate column.
-5. **No unit tests**: Testing is done manually via documented test cases in `docs/test-cases.md` rather than automated JUnit tests.
+1. **CSV load relationship restoration**: After saving and reloading from CSV, Player↔Hero and Hero↔Equipment relationships are not fully re-wired (entities load as independent objects).
+2. **Leaderboard display**: Minor formatting issue with `%` sign placement in the win rate column.
 
 ---
 

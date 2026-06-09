@@ -321,8 +321,8 @@ public class Main {
             return;
         }
 
-        dataManager.initializeData();
-        System.out.println("Data reloaded from files.");
+        dataManager.replaceWithLoadedData(loaded);
+        System.out.println("Data reloaded from files (" + loaded.players.size() + " players).");
     }
 
     private static void handleLogin() {

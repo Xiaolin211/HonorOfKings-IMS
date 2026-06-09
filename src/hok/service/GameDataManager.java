@@ -6,6 +6,7 @@ import hok.model.Hero;
 import hok.model.MatchRecord;
 import hok.model.Player;
 import hok.model.Team;
+import hok.storage.FileStorageService;
 import hok.util.DataInitializer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,6 +81,20 @@ public class GameDataManager {
         matchRecords = DataInitializer.createMatchRecords(teams);
 
         // Step 6: Rebuild all indexes
+        rebuildAllIndexes();
+    }
+
+    /**
+     * Replaces all internal data with externally loaded data from CSV files.
+     * Preserves team↔player and hero↔equipment relationships by rebuilding indexes.
+     */
+    public void replaceWithLoadedData(FileStorageService.LoadedData loaded) {
+        this.players = new ArrayList<>(loaded.players);
+        this.admins = new ArrayList<>(loaded.admins);
+        this.heroes = new ArrayList<>(loaded.heroes);
+        this.equipment = new ArrayList<>(loaded.equipment);
+        this.teams = new ArrayList<>(loaded.teams);
+        this.matchRecords = new ArrayList<>(loaded.matches);
         rebuildAllIndexes();
     }
 

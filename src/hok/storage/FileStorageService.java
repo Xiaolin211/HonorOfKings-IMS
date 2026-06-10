@@ -74,6 +74,9 @@ public class FileStorageService {
         data.equipment = loadEquipment();
         data.teams = loadTeams(data.players);
         data.matches = loadMatchRecords(data.teams);
+        // Restore Player→Hero and Hero→Equipment relationships
+        restorePlayerHeroRelationships(data.players, data.heroes);
+        restoreHeroEquipmentRelationships(data.heroes, data.equipment);
         return data;
     }
 
@@ -360,6 +363,100 @@ public class FileStorageService {
             if (t.getId().equals(id)) return t;
         }
         return null;
+    }
+
+    private Hero findHeroById(List<Hero> heroes, String id) {
+        for (Hero h : heroes) {
+            if (h.getId().equals(id)) return h;
+        }
+        return null;
+    }
+
+    private Equipment findEquipmentById(List<Equipment> equipments, String id) {
+        for (Equipment e : equipments) {
+            if (e.getId().equals(id)) return e;
+        }
+        return null;
+    }
+
+    /**
+     * Restores Player→Hero relationships after loading all data.
+     */
+    private void restorePlayerHeroRelationships(List<Player> players, List<Hero> heroes) {
+        File file = new File(DATA_DIR + "/players.csv");
+        if (!file.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            br.readLine(); // skip header
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(SEPARATOR);
+                if (parts.length < 8) continue;
+                String playerId = parts[0];
+                String heroIds = parts[7];
+                if (heroIds.isEmpty()) continue;
+                
+                // Find the player
+                Player player = null;
+                for (Player p : players) {
+                    if (p.getId().equals(playerId)) {
+                        player = p;
+                        break;
+                    }
+                }
+                if (player == null) continue;
+                
+                // Restore hero references
+                String[] ids = heroIds.split(";");
+                for (String hid : ids) {
+                    Hero hero = findHeroById(heroes, hid);
+                    if (hero != null) {
+                        player.addHero(hero);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error restoring player-hero relationships: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Restores Hero→Equipment relationships after loading all data.
+     */
+    private void restoreHeroEquipmentRelationships(List<Hero> heroes, List<Equipment> equipments) {
+        File file = new File(DATA_DIR + "/heroes.csv");
+        if (!file.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            br.readLine(); // skip header
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(SEPARATOR);
+                if (parts.length < 8) continue;
+                String heroId = parts[0];
+                String eqIds = parts[7];
+                if (eqIds.isEmpty()) continue;
+                
+                // Find the hero
+                Hero hero = null;
+                for (Hero h : heroes) {
+                    if (h.getId().equals(heroId)) {
+                        hero = h;
+                        break;
+                    }
+                }
+                if (hero == null) continue;
+                
+                // Restore equipment references
+                String[] ids = eqIds.split(";");
+                for (String eid : ids) {
+                    Equipment eq = findEquipmentById(equipments, eid);
+                    if (eq != null) {
+                        hero.addCompatibleEquipment(eq);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error restoring hero-equipment relationships: " + e.getMessage());
+        }
     }
 
     // ==================== Utility ====================

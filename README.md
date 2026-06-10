@@ -4,7 +4,7 @@
 
 ## 1. Project Overview
 
-This is a Java console-based Information Management System for the game "Honor of Kings" (王者荣耀). It manages players, heroes, equipment, teams, and match records, featuring an AI-powered recommendation engine that suggests optimal heroes and equipment based on multi-factor weighted scoring.
+This is a Java console-based Information Management System for the game "Honor of Kings". It manages players, heroes, equipment, teams, and match records, featuring an AI-powered recommendation engine that suggests optimal heroes and equipment based on multi-factor weighted scoring.
 
 **Key Features:**
 - Player/Team/Hero lookup with detailed statistics
@@ -126,8 +126,7 @@ Full test documentation: `docs/test-cases.md`
 
 ## 8. Known Limitations
 
-1. **CSV load relationship restoration**: After saving and reloading from CSV, Player↔Hero and Hero↔Equipment relationships are not fully re-wired (entities load as independent objects).
-2. **Leaderboard display**: Minor formatting issue with `%` sign placement in the win rate column.
+1. **Leaderboard display**: Minor formatting issue with `%` sign placement in the win rate column.
 
 ---
 

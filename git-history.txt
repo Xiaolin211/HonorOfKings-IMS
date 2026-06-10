@@ -1,23 +1,24 @@
-* 82f20b8 (HEAD -> master) [Docs] Update agent-log with Fix Agent Contributio...
-* bc2f33f [Fix] Restore Player→Hero and Hero→Equipment relationships after CS...
+* 26cfa76 (HEAD -> master) [Docs] Remove Chinese from README, update Known Limitations, update agent-log Total to 51, regenerate git-history.txt
+* 82f20b8 [Docs] Update agent-log with Fix Agent Contribution 2 and Commit Summary #36
+* bc2f33f [Fix] Restore Player→Hero and Hero→Equipment relationships after CSV load
 * cc34c69 [Docs] Update agent-log Commit Summary with latest Human commit
-* 50f1e05 [Human] Fix CSV header, LoadData logic, README inconsistencies, and...
-* 9579257 [Human] Final prompts.md and agent-log.md cleanup: fix numbering, a...
+* 50f1e05 [Human] Fix CSV header, LoadData logic, README inconsistencies, and agent-log commit summary
+* 9579257 [Human] Final prompts.md and agent-log.md cleanup: fix numbering, add missing detail sections
 * 32bbad8 [Docs] Backfill agent-log and prompts for renumbering commit 31cd409
-* 31cd409 [AI-Review] Renumber prompts 20-25 to 17-22, fix gap in summary num...
+* 31cd409 [AI-Review] Renumber prompts 20-25 to 17-22, fix gap in summary numbering
 * 71a1d3b [Docs] Update agent log and git history for final human review commit
 * 59d190c [Human] Add final human review section to reflection.md
-* 149bbc2 [Docs] Update agent log and git history for plan.md placeholder rep...
-* ea82c17 [Human] Replace plan.md Section 12 placeholder with final completio...
-* f20d71e [Docs] Backfill agent-log and prompts for duplicate-removal commit ...
-* f546874 [AI-Review] Remove duplicate Commit Summary table and duplicate pro...
+* 149bbc2 [Docs] Update agent log and git history for plan.md placeholder replacement
+* ea82c17 [Human] Replace plan.md Section 12 placeholder with final completion summary
+* f20d71e [Docs] Backfill agent-log and prompts for duplicate-removal commit f546874
+* f546874 [AI-Review] Remove duplicate Commit Summary table and duplicate prompt entry
 * 5b7a6b1 [Docs] Backfill agent-log and prompts for cleanup commit 5c6006e
-* 5c6006e [AI-Review] Clean agent-log and prompts: fix counts, merge tables, ...
+* 5c6006e [AI-Review] Clean agent-log and prompts: fix counts, merge tables, add missing prompts
 * 2c22db1 [Docs] Update agent log and prompts for JUnit 5 test suite
-* 83342dc [AI-Review] Add JUnit 5 unit tests covering OOP concepts and cascad...
+* 83342dc [AI-Review] Add JUnit 5 unit tests covering OOP concepts and cascade safety
 * 1ca0322 [Docs] Add agent log and prompt entries for final modifier audit
-* 527bbc6 [AI-Review] Add final modifier to immutable ID fields in all model ...
-* df943ce [Docs] Add prompts and agent log entries for gap audit and LocalDat...
+* 527bbc6 [AI-Review] Add final modifier to immutable ID fields in all model classes
+* df943ce [Docs] Add prompts and agent log entries for gap audit and LocalDate fix
 * 70b8c0f [AI-Review] Refactor MatchRecord.matchDate from String to LocalDate
 * 0721742 [Docs] Backfill prompts.md with missing entries for Prompts 14-16
 * ca2ee37 [Docs] Update agent log and git history with latest review commit
@@ -33,18 +34,20 @@
 * 5b41159 [Human] Create test cases with results from manual testing
 * 947dbee [Docs] Update prompts and agent log with fix entry
 * a4b4ba3 [Fix] Prevent crash and infinite loop in admin delete operations
-* baf6ca0 [Docs] Update prompts and agent log with recommendation engine impl...
-* 24f965b [AI-Implementation] Implement recommendation engine with weighted s...
+* baf6ca0 [Docs] Update prompts and agent log with recommendation engine implementation
+* 24f965b [AI-Implementation] Implement recommendation engine with weighted scoring
 * 2bc3ab1 [Docs] Update prompts and agent log with plan.md update entry
 * 6654b36 [AI-Architect] Add recommendation engine to plan.md
-* b196206 [Docs] Update prompts and agent log with review and recommendation ...
+* b196206 [Docs] Update prompts and agent log with review and recommendation design
 * c629f39 [AI-Architect] Add recommendation engine UML and design
 * 40b0651 [Docs] Update prompts and agent log for Prompts 09-11
 * fb61331 [AI-Implementation] Add Authentication Admin and FileStorage services
 * 6ea84f2 [Docs] Update prompts and agent log for Prompts 06-08
-* 9257ef5 [AI-Implementation] Add SearchService RankingService and wire into ...
+* 9257ef5 [AI-Implementation] Add SearchService RankingService and wire into Main menu
 * cb03eb4 [AI-Implementation] Add InputHelper and Main menu skeleton with stubs
 * 5ee1b66 [Docs] Update prompts and agent log with Prompt 05 entry
 * eb5bbdb [AI-Implementation] Add GameDataManager with CRUD and HashMap indexes
 * 0642fb0 [Docs] Update prompts log and agent log for Prompts 01-04
-* 3a2e260 [AI-Implementation] Add core model classes enums interface and Data...
+* 3a2e260 [AI-Implementation] Add core model classes enums interface and DataInitializer
+* 73ce68a [Human] Approve design document and UML class diagrams
+* 7e9c867 [Human] Create project plan with requirements and class design

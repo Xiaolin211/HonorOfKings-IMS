@@ -136,13 +136,19 @@ This document records AI agent contributions grouped by role, with corresponding
 
 ## 4. Fix Agent
 
-**Total contributions**: 1
+**Total contributions**: 2
 
 ### Contribution 1: Admin Delete Crash Fix (Prompt 13a)
 
 - **Main contribution**: Fixed two bugs: (1) InputHelper NoSuchElementException — added `safeNextLine()` wrapper with `hasNextLine()` guard and graceful System.exit; (2) Team.removePlayer() ConcurrentModificationException — replaced for-each with Iterator pattern. Verified TC-19 passes.
 - **Related commits**: `a4b4ba3` [Fix]
 - **Human decision**: ACCEPTED. Minimal fixes, standard Java idioms.
+
+### Contribution 2: CSV Relationship Restoration (Human-directed fix)
+
+- **Main contribution**: Added `restorePlayerHeroRelationships()` and `restoreHeroEquipmentRelationships()` methods to `FileStorageService`, plus `findHeroById()` and `findEquipmentById()` helpers. These re-read the CSV files after loading and wire up Player→Hero and Hero→Equipment object references by ID lookup. Also added calls in `loadAll()`. Total: 97 lines.
+- **Related commits**: `bc2f33f` [Fix]
+- **Human decision**: ACCEPTED. This closes the CSV round-trip gap identified in earlier architecture and code reviews.
 
 ---
 
@@ -193,7 +199,8 @@ This document records AI agent contributions grouped by role, with corresponding
 | 33 | `59d190c` | [Human] | Add final human review section to reflection.md |
 | 34 | `31cd409` | [AI-Review] | Renumber prompts 20-25 to 17-22, fix gap in summary numbering |
 | 35 | `50f1e05` | [Human] | Fix CSV header, LoadData logic, README inconsistencies, and agent-log commit summary |
+| 36 | `bc2f33f` | [Fix] | Restore Player→Hero and Hero→Equipment relationships after CSV load |
 
-**Quota Status**: [Human] 8/4 ✓ | [AI-Architect] 3/3 ✓ | [AI-Implementation] 6/3 ✓ | [AI-Review] 9/2 ✓ | **Total 47/12 ✓**
+**Quota Status**: [Human] 8/4 ✓ | [AI-Architect] 3/3 ✓ | [AI-Implementation] 6/3 ✓ | [AI-Review] 9/2 ✓ | [Fix] 2 ✓ | **Total 48/12 ✓**
 
 > **#36–#46** are iterative documentation-maintenance commits (tracking-file updates, backfills, renumbering, and consistency fixes across prompts.md, agent-log.md, and git-history.txt). Full details in git-history.txt.

@@ -1440,6 +1440,26 @@ Removed duplicate tables and entries from both documents. Consolidated into clea
 
 ## Prompt 23 — Review Agent: Renumber prompts 20-25 to 17-22
 
+| Field | Detail |
+|-------|--------|
+| **Time** | 2026-06-07 23:55 |
+| **Tool/Model** | Claude Code (CherryClaw) |
+| **Agent Role** | AI-Review |
+| **Related Commit** | `31cd409` |
+
+### My Prompt
+
+```
+The prompts.md file currently has numbering gaps: after Prompt 16 there is a jump
+in numbering (entries 20-25 exist but 17-19 are missing). Please renumber entries
+20-25 to 17-22 so the numbering is sequential without gaps. Also fix the gap
+in the Summary table numbering to match.
+```
+
+### AI Response Summary
+
+Renumbered prompts 20-25 to 17-22 in prompts.md. Updated all cross-references in the Summary table to match the new numbering. Verified no content was lost during renumbering — all 23 prompt records remain intact. Numbering is now sequential from 01 through 23 without gaps.
+
 ### My Decision
 
 **ACCEPTED.** Numbering is now sequential without gaps.

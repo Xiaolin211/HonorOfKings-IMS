@@ -1,4 +1,4 @@
-id,name,role,level,winRate,totalMatches,heroIds,password
+id,name,role,level,winRate,totalMatches,teamId,heroIds,password
 p001,Alex,PLAYER,22,0.68,145,t01,h01;h02;h03;h08,p001123
 p002,Blake,PLAYER,18,0.55,98,t01,h04;h05;h06,p002123
 p003,Celine,PLAYER,25,0.72,210,t01,h02;h07;h08;h09,p003123
